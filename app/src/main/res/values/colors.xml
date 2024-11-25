@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="red_base">#ef4444</color>
+    <color name="green_base">#44ef44</color>
+
+    <color name="button_pressed_gradientS">#9273D0</color>
+    <color name="button_pressed_gradientE">#BAA5E0</color>
+    <color name="button_gradientS">#7246c1</color>
+    <color name="button_gradientE">#422774</color>
+    <color name="button_disabled">#9D9FA2</color>
+    <color name="button_stroke">#422774</color>
+
+    <color name="layout_stroke">#BAA5E0</color>
+    <color name="bg_layout">#e9e9e9</color>
+    <color name="text_special_color">#422774</color>
+    <color name="text_special_color2">#9D9FA2</color>
+    <color name="text_normal_color">#cc110000</color>
+
+    <color name="menu_text_color">#FFFFFF</color>
+    <color name="menu_shadow_color">#000000</color>
+    <color name="static_text_color">#003366</color>
+    <color name="text_color">#000033</color>
+
+    <color name="primary">#489DF1</color>
+    <color name="primary_dark">#2E69A4</color>
+    <color name="primary_darker">#255483</color>
+    <color name="white">#FFFFFF</color>
+    <color name="accent">#FFFFFF</color>
+
+    <color name="black">#000000</color>
+    <color name="jet">#222222</color>
+    <color name="oil">#333333</color>
+    <color name="monsoon">#777777</color>
+    <color name="jumbo">#888888</color>
+    <color name="aluminum">#999999</color>
+    <color name="base">#AAAAAA</color>
+    <color name="iron">#CCCCCC</color>
+    <color name="light_iron">#EEEEEE</color>
+
+    <color name="dark_grey">#404040</color>
+    <color name="background">#F7F9FB</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="red">#FF0000</color>
+    <color name="green">#00FF00</color>
+    <color name="blue">#0000FF</color>
+
+    <color name="button">#2E69A4</color>
+    <color name="button_pressed">#255483</color>
+
+    <color name="light_orange">#F8B32C</color>
+    <color name="orange">#FF6A00</color>
+    <color name="dark_orange">#B74900</color>
+</resources>

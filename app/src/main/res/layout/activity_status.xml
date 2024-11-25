@@ -1,0 +1,259 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:background="@drawable/curved_layout_with_title"
+				android:orientation="vertical">
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="@drawable/curved_layout_title"
+					android:padding="10dp"
+					android:orientation="vertical">
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textStyle="bold"
+						android:textColor="@color/text_special_color"
+						android:text="Status" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+
+					<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight=".5"
+						android:padding="10dp"
+						android:orientation="vertical">
+						<TextView
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:textStyle="bold"
+							android:textColor="@color/text_special_color2"
+							android:text="Unit" />
+						<TextView
+							android:id="@+id/tvStatusUnit"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:textColor="@color/black"
+							android:text="" />
+					</LinearLayout>
+
+					<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight=".5"
+						android:padding="10dp"
+						android:orientation="vertical">
+						<TextView
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:textStyle="bold"
+							android:textColor="@color/text_special_color2"
+							android:text="Handheld ID" />
+						<TextView
+							android:id="@+id/tvStatusHandheldID"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:textColor="@color/black"
+							android:text="" />
+					</LinearLayout>
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="10dp"
+					android:orientation="vertical">
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textStyle="bold"
+						android:textColor="@color/text_special_color2"
+						android:text="ID Log Masuk" />
+					<TextView
+						android:id="@+id/tvStatusLogin"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textColor="@color/black"
+						android:text="" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="10dp"
+					android:orientation="vertical">
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textStyle="bold"
+						android:textColor="@color/text_special_color2"
+						android:text="Jumlah Notis Keseluruhan" />
+					<TextView
+						android:id="@+id/tvStatusCountNotice"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textColor="@color/black"
+						android:text="" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="10dp"
+					android:orientation="vertical">
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textStyle="bold"
+						android:textColor="@color/text_special_color2"
+						android:text="Jumlah Notis Yang Belum Dimuat Naik" />
+					<TextView
+						android:id="@+id/tvStatusCountPendingNotice"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textColor="@color/black"
+						android:text="" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="10dp"
+					android:orientation="vertical">
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textStyle="bold"
+						android:textColor="@color/text_special_color2"
+						android:text="Jumlah Gambar" />
+					<TextView
+						android:id="@+id/tvStatusCountImage"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textColor="@color/black"
+						android:text="" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="10dp"
+					android:orientation="vertical">
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textStyle="bold"
+						android:textColor="@color/text_special_color2"
+						android:text="Jumlah Transaksi Bayaran" />
+					<TextView
+						android:id="@+id/tvStatusCountTransaction"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textColor="@color/black"
+						android:text="" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="10dp"
+					android:orientation="vertical">
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textStyle="bold"
+						android:textColor="@color/text_special_color2"
+						android:text="Total Amoun Bayaran" />
+					<TextView
+						android:id="@+id/tvStatusAmount"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textColor="@color/black"
+						android:text="" />
+				</LinearLayout>
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:layout_margin="10dp"
+				android:background="@drawable/curved_layout"
+				android:padding="5dp" >
+				<CheckBox
+					android:id="@+id/cbPrinter"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:checked="false"
+					android:textColor="@color/black"
+					android:text="Pencetak Baru" />
+
+				<android.support.design.widget.TextInputLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<EditText
+						android:id="@+id/etMACAddress"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="textCapCharacters"
+						android:maxLength="12"
+						android:padding="10dp"
+						android:hint="MAC Address"
+						android:textSize="20dp"
+						android:textColor="@color/black"
+						android:textStyle="bold" />
+				</android.support.design.widget.TextInputLayout>
+			</LinearLayout>
+
+			<android.support.v7.widget.AppCompatButton
+				android:id="@+id/btnCetak"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:background="@drawable/curved_button"
+				android:layout_gravity="center"
+				android:textColor="@color/white"
+				android:textStyle="bold"
+				android:text="Cetak" />
+
+			<android.support.v7.widget.AppCompatButton
+				android:id="@+id/btnSave"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:layout_marginTop="10dp"
+				android:background="@drawable/curved_button_inverse"
+				android:paddingBottom="1dp"
+				android:paddingTop="1dp"
+				android:textStyle="bold"
+				android:layout_margin="10dp"
+				android:text="Simpan"
+				android:textColor="@color/text_special_color" />
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</LinearLayout>

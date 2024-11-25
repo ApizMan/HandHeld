@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="transfer">Transfer Notis</string>
+    <string name="version">Version 1.2</string>
+    <string name="app_name">Handheld</string>
+    <string name="city_hall_name">Majlis Bandaraya Kuala Terengganu</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_reprint">Salinan Pendua</string>
+    <string name="menu_payment">Bayar</string>
+    <string name="menu_receipt">Salinan Resit</string>
+    <string name="menu_settings">Tetapan</string>
+    <string name="title_activity_login">Handheld</string>
+    <string name="btnOK">OK</string>
+    <string name="btnLogin">Login</string>
+    <string name="Masa">Masa:</string>
+    <string name="Tarikh">Tarikh:</string>
+    <string name="MacAddress">MAC Address</string>
+    <string name="NewPrinter">Pencetak Baru</string>
+    <string name="title_section3">Ringkasan</string>
+    <string name="title_section2">Kesalahan</string>
+    <string name="title_section1">Maklumat</string>
+    <string name="title_activity_noticeissuance">Form Notis</string>
+    <string name="title_activity_notices">Form Notis</string>
+    <string name="title_activity_maklumat">Form Maklumat</string>
+    <string name="title_activity_kesalahan">Form Kesalahan</string>
+    <string name="title_activity_ringkasan">Form Ringkasan</string>
+    <string name="title_activity_image">Form Gambar</string>
+    <string name="title_activity_reprint">Form Salinan</string>
+    <string name="title_activity_status">Form Status</string>
+    <string name="title_activity_payment">Form Bayaran</string>
+    <string name="title_activity_receipt">Form Salinan Resit</string>
+	<string name="title_activity_transfer">Form Transfer</string>
+    <string name="title_activity_prestage">Form PreStage</string>
+</resources>

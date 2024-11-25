@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_reprint"
+        android:orderInCategory="100"
+        android:title="@string/menu_reprint"/>
+
+    <item
+        android:id="@+id/menu_payment"
+        android:orderInCategory="100"
+        android:title="@string/menu_payment"/>
+
+    <item
+        android:id="@+id/menu_receipt"
+        android:orderInCategory="100"
+        android:title="@string/menu_receipt"/>
+
+    <item
+        android:id="@+id/menu_settings"
+        android:orderInCategory="100"
+        android:title="@string/menu_settings"/>
+
+    <item
+        android:id="@+id/menu_logout"
+        android:orderInCategory="100"
+        android:title="@string/menu_logout"/>
+
+</menu>
