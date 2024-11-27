@@ -13,6 +13,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.app.Activity;
@@ -46,6 +47,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import my.vista.com.handheld.Business.CacheManager;
+import my.vista.com.handheld.Business.TrustAllCertificates;
 import my.vista.com.handheld.Business.VolleySingleton;
 import my.vista.com.handheld.Data.SettingsHelper;
 import my.vista.com.handheld.UI.CustomControl.CustomAlertDialog;
@@ -252,6 +254,8 @@ public class LoginActivity extends Activity {
 			String device = GetDeviceID();
 			if (!device.isEmpty()) {
 				String url = CacheManager.ServerURL + "RegisterDevice/" + device;
+				// Trust all certificates (use with caution)
+				TrustAllCertificates.trustAllHosts();
 				JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
 						new Response.Listener<JSONObject>() {
 							@Override
@@ -462,7 +466,7 @@ public class LoginActivity extends Activity {
 
 	private void ClearFileData() {
 		try {
-			File dir = new File("/mnt/sdcard/CustomImageDir");
+			File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}

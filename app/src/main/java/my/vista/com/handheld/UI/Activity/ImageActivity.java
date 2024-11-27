@@ -9,10 +9,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -72,7 +74,8 @@ public class ImageActivity extends AppCompatActivity {
 			Button btn_capture = (Button) findViewById(R.id.btn_capture);
 			btn_capture.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					File dir = new File("/mnt/sdcard/CustomImageDir");
+					// Create directory in Pictures/CustomImageDir for newer Android versions
+					File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
 					if (!dir.exists()) {
 						dir.mkdirs();
 					}
@@ -81,19 +84,17 @@ public class ImageActivity extends AppCompatActivity {
 						String delegate = "yy";
 						String year = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
 
+						// Create a file using MediaStore
+						ContentValues values = new ContentValues();
+						values.put(MediaStore.Images.Media.DISPLAY_NAME, SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
+						values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+						values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/CustomImageDir");
+
+						Uri imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-						File photo = new File(dir, SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
-						try {
-							photo.createNewFile();
-							photo.setReadable(true);
-							photo.setWritable(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-							Log.e("MESSAGE", e.getMessage());
-						}
-						intent.putExtra(MediaStore.EXTRA_OUTPUT,
-								Uri.fromFile(photo));
-						CacheManager.ImageUri = Uri.fromFile(photo);
+						intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+						CacheManager.ImageUri = imageUri; // Save the image URI
 						startActivityForResult(intent, TAKE_PICTURE);
 					}
 				}
@@ -105,7 +106,7 @@ public class ImageActivity extends AppCompatActivity {
 					Spinner spinner_image = (Spinner) findViewById(R.id.spinner_images);
 					if (spinner_image.getSelectedItemPosition() > 0) {
 						try {
-							File dir = new File("/mnt/sdcard/CustomImageDir");
+							File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
 							if (!dir.exists()) {
 								dir.mkdirs();
 							}
@@ -193,7 +194,7 @@ public class ImageActivity extends AppCompatActivity {
 				// TODO Auto-generated method stub
 				ImageView img = (ImageView) findViewById(R.id.img_view);
 				if (pos > 0) {
-					File dir = new File("/mnt/sdcard/CustomImageDir");
+					File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
 					if (!dir.exists()) {
 						dir.mkdirs();
 					}

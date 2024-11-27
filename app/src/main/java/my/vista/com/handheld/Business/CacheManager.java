@@ -34,8 +34,13 @@ public final class CacheManager
 {
 	public static String ServerURL = "http://43.252.37.175/ParkingWebService/HandheldService.svc/";
 	//public static String ServerURL = "http://myenforce.citycarpark.my/HandheldAPI/HandheldService.svc/";
+	public static String ServerKNURL = "http://myenforce.citycarpark.my/HandheldApi_MBK/HandheldService.svc/JSONService/";
+
+	public static String ServerKuantanURL = "https://mycouncil.citycarpark.my/parking/ctcp/services-listerner_mbk.php?prpid=&action=GetParkingRightByPlateVerify&filterid=";
 	/** The User id. */
 	public static String UserId = "";
+	public static String prpId = "";
+	public static String action = "";
 	public static String HandheldId = "";
 
 	public static String officerCode = "";

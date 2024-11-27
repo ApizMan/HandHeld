@@ -73,7 +73,7 @@ public class SummonIssuanceInfo
 
 	public SummonIssuanceInfo(boolean demo)
 	{
-		NoticeSerialNo = "KT0022000001";
+		NoticeSerialNo = "KN0022000001";
 		RoadTaxNo = "1234567890";
 		VehicleMake = "PROTON";
 		VehicleModel = "PERSONA";

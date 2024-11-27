@@ -23,8 +23,10 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import my.vista.com.handheld.Business.CacheManager;
+import my.vista.com.handheld.Business.TrustAllCertificates;
 import my.vista.com.handheld.Business.VolleySingleton;
 import my.vista.com.handheld.Data.DbLocal;
 import my.vista.com.handheld.Data.SettingsHelper;
@@ -195,23 +198,25 @@ public class MaklumatFragment extends Fragment {
     }
 
     private void CheckVehicleNo(final String vehicleNo) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("OfficerID", CacheManager.UserId);
-        params.put("DeviceID", SettingsHelper.HandheldCode);
-        params.put("VehicleNo", vehicleNo);
+        String url = CacheManager.ServerKuantanURL + vehicleNo;
+        TrustAllCertificates.trustAllHosts();
 
-        String url = CacheManager.ServerURL + "CheckVehicleNo";
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
-                new Response.Listener<JSONObject>() {
+        JsonArrayRequest arrayRequest = new JsonArrayRequest(Request.Method.GET, url,
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray response) {
                         try {
-                            if (response != null) {
-                                String status = response.getString("StatusDescription");
-                                String statusCode = response.getString("StatusCode");
+                            if (response.length() == 0) {
+                                String status = vehicleNo +  "- Tiada Bayaran";
+                                String statusCode = "null"; // Or extract meaningful data
                                 onCheckingSuccess(status, statusCode);
                             } else {
-                                onCheckingFailed();
+                                JSONObject firstRecord = response.getJSONObject(0);
+                                String endDate = firstRecord.getString("enddate");
+                                String endTime = firstRecord.getString("endtime");
+                                String status = vehicleNo + "- Berbayar (" + endDate + " " + endTime + ")";
+                                String statusCode = "BAYAR"; // Or any meaningful status code
+                                onCheckingSuccess(status, statusCode);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -240,12 +245,12 @@ public class MaklumatFragment extends Fragment {
                     }
                 });
 
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+        arrayRequest.setRetryPolicy(new DefaultRetryPolicy(
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        VolleySingleton.getInstance(this.getActivity()).addToRequestQueue(postRequest);
+        VolleySingleton.getInstance(this.getActivity()).addToRequestQueue(arrayRequest);
     }
 
     private void onCheckingSuccess(final String message, final String code) {

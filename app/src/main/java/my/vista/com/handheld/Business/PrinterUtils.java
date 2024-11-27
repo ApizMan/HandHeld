@@ -313,10 +313,10 @@ public final class PrinterUtils
     }
 
     public static PrintingDocument CreateNotice(SummonIssuanceInfo info) {
-        PrintingDocument doc = new PrintingDocument("2400");
+        PrintingDocument doc = new PrintingDocument("2650");
         //PrintingDocument doc = new PrintingDocument("2000");
         if(info.IsClamping.equalsIgnoreCase("True")) {
-            doc = new PrintingDocument("2450");
+            doc = new PrintingDocument("2700");
         }
 
         try {
@@ -344,20 +344,31 @@ public final class PrinterUtils
 
             Printer.storeImage("sign.png", new ZebraImageAndroid(bmp), bmp.getWidth(), bmp.getHeight());
 
-            doc.DrawImageName(0,0,"small.png");
+            doc.DrawImageName(-5,0,"small.png");
 
-            doc.DrawTextFlow(130, 0, 35, 670, "C", "MAJLIS BANDARAYA KUALA TERENGGANU");
-            doc.DrawTextFlow(130, 35, 25, 670, "C", "AKTA PENGANGKUTAN JALAN 1987 (AKTA 333)\\&" +
-                    "PERINTAH LALULINTAS JALAN (TEMPAT LETAK KERETA)\\&MAJLIS BANDARAYA KUALA TERENGGANU 1995");
+            doc.DrawTextFlow(130, 20, 40, 670, "C", "MAJLIS BANDARAYA KUANTAN");
+            doc.DrawTextFlow(130, 45, 35, 670, "C", "NOTIS KESALAHAN SERTA TAWARAN KOMPAUN");
 
-            doc.DrawBarcode39(150, 100, 70, info.NoticeSerialNo);
+            doc.DrawBarcode128(0, 200, 70, info.NoticeSerialNo);
+            doc.DrawBarcode128(500, 0, 70, info.NoticeSerialNo);
 
-            doc.DrawText(10, 110, 25, "Kepada Pemandu / Pemilik Kenderaan :");
+            doc.DrawText(10, 100, 30,   "NO. KOMPAUN");
+            doc.DrawText(10, 40, 35, info.NoticeSerialNo);
+
+            doc.DrawText(10, 50, 20, "TARIKH");
+            doc.DrawText(230, 0, 25, ": " + CacheManager.GetDateString(info.OffenceDateTime));
+            doc.DrawText(10, 30, 20, "WAKTU");
+            doc.DrawText(230, 0, 25, ": " + CacheManager.GetTimeString(info.OffenceDateTime));
+
+            doc.DrawText(10, 50, 30, "Kepada Pemandu / Pemilik Kenderaan :");
 
             doc.DrawText(10, 35, 20, "NO KENDERAAN");
             doc.DrawText(230, 0, 25, ": " + info.VehicleNo);
             doc.DrawText(10, 30, 20, "JENIS KENDERAAN");
             doc.DrawText(230, 0, 25, ": " + info.VehicleType);
+
+            doc.DrawText(10, 30, 20, "NO CUKAI");
+            doc.DrawText(230, 0, 25, ": " + info.RoadTaxNo);
 
             String makeModel = "";
             if(info.VehicleMake.length() != 0)
@@ -375,9 +386,6 @@ public final class PrinterUtils
             doc.DrawText(10, 30, 20, "WARNA");
             doc.DrawText(230, 0, 25, ": " + info.VehicleColor);
 
-            doc.DrawText(10, 30, 20, "NO CUKAI JALAN");
-            doc.DrawText(230, 0, 25, ": " + info.RoadTaxNo);
-
             doc.DrawText(10, 30, 20, "ZON");
             doc.DrawText(230, 0, 25, ": " + info.OffenceLocationArea);
 
@@ -387,13 +395,8 @@ public final class PrinterUtils
             else
                 location = info.SummonLocation;
 
-            doc.DrawText(10, 30, 20, "TEMPAT/JALAN");
+            doc.DrawText(10, 30, 20, "LOKASI");
             doc.DrawText(230, 0, 25, ": " + location);
-
-            doc.DrawText(10, 30, 20, "TARIKH KESALAHAN");
-            doc.DrawText(230, 0, 25, ": " + CacheManager.GetDateString(info.OffenceDateTime));
-            doc.DrawText(10, 30, 20, "WAKTU DIKELUARKAN");
-            doc.DrawText(230, 0, 25, ": " + CacheManager.GetTimeString(info.OffenceDateTime));
 
             doc.DrawText(0, 60, 20, "PERUNTUKAN UNDANG-UNDANG :");
             doc.DrawText(50, 30, 25, info.OffenceAct);

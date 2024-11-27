@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
@@ -135,7 +136,7 @@ public class RingkasanFragment extends Fragment {
         TextView tColor = (TextView)rootView.findViewById(R.id.tvSummaryColor);
         tColor.setText(CacheManager.SummonIssuanceInfo.VehicleColor);
 
-        File dir = new File("/mnt/sdcard/CustomImageDir");
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -654,7 +655,7 @@ public class RingkasanFragment extends Fragment {
 
     private void ClearFileData() {
         try {
-            File dir = new File("/mnt/sdcard/CustomImageDir");
+            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
             if (!dir.exists()) {
                 dir.mkdirs();
             }
@@ -668,13 +669,13 @@ public class RingkasanFragment extends Fragment {
 
     private void MovePictures()
     {
-        File dir = new File("/mnt/sdcard/CustomImageDir");
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
         if (!dir.exists()) {
             dir.mkdirs();
         }
         for(File file : dir.listFiles()) {
             try {
-                File newDir = new File("/mnt/sdcard/PendingImageDir");
+                File newDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
                 if (!newDir.exists()) {
                     newDir.mkdirs();
                 }
