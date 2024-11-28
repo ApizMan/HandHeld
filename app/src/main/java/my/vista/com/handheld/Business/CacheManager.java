@@ -16,6 +16,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -32,15 +33,14 @@ import my.vista.com.handheld.Data.SettingsHelper;
 @SuppressWarnings("deprecation")
 public final class CacheManager 
 {
-	public static String ServerURL = "http://43.252.37.175/ParkingWebService/HandheldService.svc/";
-	//public static String ServerURL = "http://myenforce.citycarpark.my/HandheldAPI/HandheldService.svc/";
+//	public static String ServerURL = "http://43.252.37.175/ParkingWebService/HandheldService.svc/";
+	public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MBK/HandheldService.svc/JSONService/";
 	public static String ServerKNURL = "http://myenforce.citycarpark.my/HandheldApi_MBK/HandheldService.svc/JSONService/";
 
 	public static String ServerKuantanURL = "https://mycouncil.citycarpark.my/parking/ctcp/services-listerner_mbk.php?prpid=&action=GetParkingRightByPlateVerify&filterid=";
 	/** The User id. */
 	public static String UserId = "";
-	public static String prpId = "";
-	public static String action = "";
+	public static int noticeSerialNumber;
 	public static String HandheldId = "";
 
 	public static String officerCode = "";
@@ -124,6 +124,26 @@ public final class CacheManager
 
 	public static BluetoothSerialService mSerialService = null;
     public static String NoticeSerialNo;
+
+	public static String deviceId = null;
+
+	public static void initialize(Context context) {
+		mContext = context;
+		loadDeviceId();
+	}
+
+	public static void saveDeviceId(String device) {
+		deviceId = device;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("deviceId", device);
+		editor.apply();
+	}
+
+	private static void loadDeviceId() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		deviceId = sharedPreferences.getString("deviceId", null);
+	}
 
     public static my.vista.com.handheld.Entity.SummonIssuanceInfo updateData(my.vista.com.handheld.Entity.SummonIssuanceInfo info) {
 		try {

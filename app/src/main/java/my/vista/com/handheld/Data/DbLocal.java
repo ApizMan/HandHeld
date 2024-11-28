@@ -437,7 +437,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO OFFENCE_ACT (ID, DESCRIPTION, SHORT_DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("Description") +
+							"('" + info.getString("Code") + "', '" + info.getString("Description") +
 							"', '" + info.getString("ShortDescription") + "')";
 					cur = obj.Query(sqlCommand, null);
 
@@ -461,51 +461,63 @@ public class DbLocal
 		return true;
 	}
 
-	public static boolean InsertOffenceSection(Context context, JSONArray list)
-	{
+	public static boolean InsertOffenceRateMaster(Context context, JSONArray list) {
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 		Cursor cur = null;
-		try
-		{
+		try {
 			for (int i = 0; i < list.length(); i++) {
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFENCE_SECTION (ID, ACT_ID, SECTION_NO, SUBSECTION_NO, DESCRIPTION, " +
+					// Prepare SQL values, handle nulls and type conversions
+					String actCode = info.getString("ActCode");
+					String sectionCode = info.getString("SectionCode");
+					String zone1 = info.optString("Zone1", "NULL");
+					String zone2 = info.optString("Zone2", "NULL");
+					String zone3 = info.optString("Zone3", "NULL");
+					String zone4 = info.optString("Zone4", "NULL");
+					String amount1 = info.optString("Amount1", "NULL");
+					String amount2 = info.optString("Amount2", "NULL");
+					String amount3 = info.optString("Amount3", "NULL");
+					String amount4 = info.optString("Amount4", "NULL");
+					String amountDesc1 = info.optString("AmountDesc1", "");
+					String amountDesc2 = info.optString("AmountDesc2", "");
+					String amountDesc3 = info.optString("AmountDesc3", "");
+					String amountDesc4 = info.optString("AmountDesc4", "");
+					String maxCompoundAmount = info.optString("MaxCompoundAmount", "NULL");
+					String sNo = info.getString("SNo");
+
+					// Construct the SQL command
+					String sqlCommand = "INSERT INTO OFFENCE_RATE_MASTER (ID, ACT_ID, SECTION_NO, SUBSECTION_NO, DESCRIPTION, " +
 							"ZONE1, ZONE2, ZONE3, ZONE4, AMOUNT1, AMOUNT2, AMOUNT3, AMOUNT4, SMALL_AMOUNT1, SMALL_AMOUNT2, " +
 							"SMALL_AMOUNT3, SMALL_AMOUNT4, DESC1, DESC2, DESC3, DESC4, MAX_AMOUNT, RESULT_CODE) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("ActID") + "', '" +
-							info.getString("SectionNo") + "', '" + info.getString("SubsectionNo") + "', '" +
-							info.getString("Description") + "', " +
-							info.getString("Zone1") + ", " + info.getString("Zone2") + ", " +
-							info.getString("Zone3") + ", " + info.getString("Zone4") + ", " +
-							info.getString("Amount1") + ", " + info.getString("Amount2") + ", " +
-							info.getString("Amount3") + ", " + info.getString("Amount4") + ", " +
-							info.getString("SmallAmount1") + ", " + info.getString("SmallAmount2") + ", " +
-							info.getString("SmallAmount3") + ", " + info.getString("SmallAmount4") + ", '" +
-							info.getString("Description1") + "', '" + info.getString("Description2") + "', '" +
-							info.getString("Description3") + "', '" + info.getString("Description4") + "', " +
-							info.getString("MaxAmount") + ", '" + info.getString("ResultCode") +
-							"')";
+							"('" + sNo + "', '" + actCode + "', '" + sectionCode + "', NULL, '', " +
+							zone1 + ", " + zone2 + ", " + zone3 + ", " + zone4 + ", " +
+							amount1 + ", " + amount2 + ", " + amount3 + ", " + amount4 + ", NULL, NULL, " +
+							"NULL, NULL, '" + amountDesc1 + "', '" + amountDesc2 + "', '" + amountDesc3 + "', '" +
+							amountDesc4 + "', " + maxCompoundAmount + ", NULL)";
+
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
-
+						// Process result if needed
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
-					cur.close();
-					cur = null;
+					if (cur != null) {
+						cur.close();
+						cur = null;
+					}
 				}
 			}
-		}
-		catch(Exception ex)
-		{
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			return false;
+		} finally {
+			obj.Close();
 		}
-		obj.Close();
 		return true;
 	}
 
@@ -520,8 +532,8 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFENCE_AREA (ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("Description") + "')";
+					String sqlCommand = "INSERT INTO OFFENCE_LOCATION_AREA (ID, DESCRIPTION) VALUES " +
+							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -555,8 +567,8 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFENCE_LOCATION (ID, AREA_ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("AreaID") + "', '" +
+					String sqlCommand = "INSERT INTO OFFENCE_LOCATION (CODE, OFFENCE_LOCATION_AREA_CODE, DESCRIPTION) VALUES " +
+							"('" + info.getString("Code") + "', '" + info.getString("OffenceLocationAreaCode") + "', '" +
 							info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
@@ -580,6 +592,43 @@ public class DbLocal
 		return true;
 	}
 
+	public static boolean InsertOffenceSection(Context context, JSONArray list) {
+		DbUtils obj = new DbUtils(context);
+		obj.Open();
+		Cursor cur = null;
+		try {
+			for (int i = 0; i < list.length(); i++) {
+				try {
+					JSONObject info = list.getJSONObject(i);
+
+					String sqlCommand = "INSERT INTO OFFENCE_SECTIONS (ID, OFFENCE_ACT_CODE, NO, SUBSECTION_NO, DESCRIPTION) VALUES " +
+							"('" + info.getString("Code") + "', '" + info.getString("OffenceActCode") + "', '" +
+							info.getString("No") + "', '" + info.optString("SubsectionNo", "") + "', '" +
+							info.getString("Description") + "')";
+
+					cur = obj.Query(sqlCommand, null);
+
+					if ((cur != null) && cur.moveToFirst()) {
+						// Process result if needed
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (cur != null) {
+						cur.close();
+					}
+					cur = null;
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		} finally {
+			obj.Close();
+		}
+		return true;
+	}
+
 	public static boolean InsertOfficerMaintenance(Context context, JSONArray list)
 	{
 		DbUtils obj = new DbUtils(context);
@@ -591,8 +640,8 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFICER_MAINTENANCE (ID, USER_ID, NAME, PASSWORD) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("UserID") + "', '" +
+					String sqlCommand = "INSERT INTO OFFICER_MAINTENANCE (ID, NAME, PASSWORD) VALUES " +
+							"('" + info.getString("ID") + "', '" +
 							info.getString("Name") + "', '" + info.getString("Password") + "')";
 					cur = obj.Query(sqlCommand, null);
 
@@ -628,7 +677,42 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO OFFICER_UNIT (ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("Description") + "')";
+							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
+					cur = obj.Query(sqlCommand, null);
+
+					if ((cur != null) && cur.moveToFirst()) {
+
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					cur.close();
+					cur = null;
+				}
+			}
+		}
+		catch(Exception ex)
+		{
+			return false;
+		} finally {
+			obj.Close();
+		}
+		return true;
+	}
+
+	public static boolean InsertOfficerRanks(Context context, JSONArray list)
+	{
+		DbUtils obj = new DbUtils(context);
+		obj.Open();
+		Cursor cur = null;
+		try
+		{
+			for (int i = 0; i < list.length(); i++) {
+				try {
+					JSONObject info = list.getJSONObject(i);
+
+					String sqlCommand = "INSERT INTO OFFICER_UNIT (ID, RANK) VALUES " +
+							"('" + info.getString("Code") + "', '" + info.getString("Rank") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -663,7 +747,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO VEHICLE_COLOR (ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("Description") + "')";
+							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -698,7 +782,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO VEHICLE_TYPE (ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("Description") + "')";
+							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -733,7 +817,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO VEHICLE_MAKE (ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("Description") + "')";
+							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -768,7 +852,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO VEHICLE_MODEL (ID, MAKE_ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("ID") + "', '" + info.getString("MakeID") + "', '" +
+							"('" + info.getString("Code") + "', '" + info.getString("VehicleMakeCode") + "', '" +
 							info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
@@ -1347,7 +1431,7 @@ public class DbLocal
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 
-		String sqlCommand = "SELECT ID, USER_ID, NAME, PASSWORD FROM OFFICER_MAINTENANCE WHERE USER_ID = '" + userId + "'";
+		String sqlCommand = "SELECT ID, NAME, PASSWORD FROM OFFICER_MAINTENANCE WHERE ID = '" + userId + "'";
 
 		Cursor cur = obj.Query(sqlCommand, null);
 		if( (cur != null) && cur.moveToFirst() )
@@ -1357,7 +1441,6 @@ public class DbLocal
 			{
 				DataOfficerInfo category = new DataOfficerInfo(
 						cur.getString(DataOfficerInfo.ColumnName.ID.ordinal()),
-						cur.getString(DataOfficerInfo.ColumnName.USER_ID.ordinal()),
 						cur.getString(DataOfficerInfo.ColumnName.NAME.ordinal()),
 						cur.getString(DataOfficerInfo.ColumnName.PASSWORD.ordinal())
 						);
@@ -1375,7 +1458,6 @@ public class DbLocal
 			if(Encryption.VerifyHash(password, encryptedPassword, "MD5"))
 			{
 				CacheManager.officerCode = list.get(0).ID;
-				CacheManager.officerId = list.get(0).UserID;
 				CacheManager.officerName = list.get(0).Name;
 				CacheManager.officerDetails = CacheManager.officerName.trim();
 				CacheManager.officerUnit = "";

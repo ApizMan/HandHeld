@@ -67,15 +67,17 @@ public class LoginActivity extends Activity {
 	private Runnable doLogin;
 	int retry = 0;
 	JSONArray offenceActs;
-	JSONArray offenceSections;
-	JSONArray offenceAreas;
+	JSONArray offenceRateMasters;
+	JSONArray offenceLocationAreas;
 	JSONArray offenceLocations;
-	JSONArray officerInfos;
+	JSONArray offenceSections;
+	JSONArray officerMaintenances;
 	JSONArray vehicleTypes;
 	JSONArray vehicleColors;
 	JSONArray vehicleMakes;
 	JSONArray vehicleModels;
 	JSONArray officerUnits;
+	JSONArray officerRanks;
 	private ProgressDialog mProgressDialog = null;
 
 	private boolean isDevelopment = false;
@@ -251,9 +253,15 @@ public class LoginActivity extends Activity {
 
 	private void PreStage() {
 		if(SettingsHelper.HandheldCode.isEmpty()) {
-			String device = GetDeviceID();
-			if (!device.isEmpty()) {
-				String url = CacheManager.ServerURL + "RegisterDevice/" + device;
+			if (CacheManager.deviceId == null || CacheManager.deviceId.isEmpty()) {
+				CacheManager.deviceId = GetDeviceID();
+				if (!CacheManager.deviceId.isEmpty()) {
+					CacheManager.saveDeviceId(CacheManager.deviceId); // Save to persistent storage
+				}
+			}
+
+			if (!CacheManager.deviceId.isEmpty()) {
+				String url = CacheManager.ServerURL + "RegisterDevice/" + CacheManager.deviceId;
 				// Trust all certificates (use with caution)
 				TrustAllCertificates.trustAllHosts();
 				JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
@@ -263,8 +271,9 @@ public class LoginActivity extends Activity {
 								try {
 									if (response != null) {
 										String handheldCode = response.getString("HandheldCode");
-										int noticeSerialNumber = response.getInt("TicketSerialNumber");
-										SettingsHelper.SaveFile(CacheManager.mContext, handheldCode, String.format("%05d", noticeSerialNumber));
+										CacheManager.noticeSerialNumber = response.getInt("NoticeSerialNumber");
+//										int noticeSerialNumber = response.getInt("TicketSerialNumber");
+										SettingsHelper.SaveFile(CacheManager.mContext, handheldCode, String.format("%05d", CacheManager.noticeSerialNumber ));
 										onPreStageSuccess();
 									} else {
 										onPreStageFailed();
@@ -324,6 +333,7 @@ public class LoginActivity extends Activity {
 
 	private void DownloadLookupTables() {
 		String url = CacheManager.ServerURL + "DownloadLookupTable/" + SettingsHelper.HandheldCode;
+		TrustAllCertificates.trustAllHosts();
 		JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
 				new Response.Listener<JSONObject>() {
 					@Override
@@ -331,18 +341,19 @@ public class LoginActivity extends Activity {
 						try {
 							if(response != null) {
 								offenceActs = response.getJSONArray("OffenceActs");
-								offenceSections = response.getJSONArray("OffenceSections");
-								offenceAreas = response.getJSONArray("OffenceAreas");
+								offenceRateMasters = response.getJSONArray("OffenceRateMasters");
+								offenceLocationAreas = response.getJSONArray("OffenceLocationAreas");
 								offenceLocations = response.getJSONArray("OffenceLocations");
-								officerInfos = response.getJSONArray("OfficerInfos");
+								offenceSections = response.getJSONArray("OffenceSections");
+								officerMaintenances = response.getJSONArray("OfficerMaintenances");
 								vehicleTypes = response.getJSONArray("VehicleTypes");
 								vehicleColors = response.getJSONArray("VehicleColors");
 								vehicleMakes = response.getJSONArray("VehicleMakes");
 								vehicleModels = response.getJSONArray("VehicleModels");
 								officerUnits = response.getJSONArray("OfficerUnits");
+								officerRanks= response.getJSONArray("OfficerRanks");
 
-								int noticeSerialNumber = response.getInt("TicketSerialNumber");
-								SettingsHelper.SaveFile(CacheManager.mContext, SettingsHelper.HandheldCode, String.format("%05d", noticeSerialNumber));
+								SettingsHelper.SaveFile(CacheManager.mContext, SettingsHelper.HandheldCode, String.format("%05d", CacheManager.noticeSerialNumber ));
 
 								DoUpdateData();
 							} else {
@@ -390,15 +401,17 @@ public class LoginActivity extends Activity {
 			DbLocal.ClearLookupTables(CacheManager.mContext);
 
 			DbLocal.InsertOffenceAct(CacheManager.mContext, offenceActs);
-			DbLocal.InsertOffenceSection(CacheManager.mContext, offenceSections);
-			DbLocal.InsertOffenceLocationArea(CacheManager.mContext, offenceAreas);
+			DbLocal.InsertOffenceRateMaster(CacheManager.mContext, offenceRateMasters);
+			DbLocal.InsertOffenceLocationArea(CacheManager.mContext, offenceLocationAreas);
 			DbLocal.InsertOffenceLocation(CacheManager.mContext, offenceLocations);
-			DbLocal.InsertOfficerMaintenance(CacheManager.mContext, officerInfos);
+			DbLocal.InsertOffenceSection(CacheManager.mContext, offenceSections);
+			DbLocal.InsertOfficerMaintenance(CacheManager.mContext, officerMaintenances);
 			DbLocal.InsertVehicleType(CacheManager.mContext, vehicleTypes);
 			DbLocal.InsertVehicleColor(CacheManager.mContext, vehicleColors);
 			DbLocal.InsertVehicleMake(CacheManager.mContext, vehicleMakes);
 			DbLocal.InsertVehicleModel(CacheManager.mContext, vehicleModels);
 			DbLocal.InsertOfficerUnit(CacheManager.mContext, officerUnits);
+			DbLocal.InsertOfficerRanks(CacheManager.mContext, officerRanks);
 
 			onDownloadSuccess();
 		} catch (Exception ex) {

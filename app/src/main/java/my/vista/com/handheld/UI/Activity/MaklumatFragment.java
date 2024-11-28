@@ -39,6 +39,7 @@ import my.vista.com.handheld.Business.TrustAllCertificates;
 import my.vista.com.handheld.Business.VolleySingleton;
 import my.vista.com.handheld.Data.DbLocal;
 import my.vista.com.handheld.Data.SettingsHelper;
+import my.vista.com.handheld.Entity.SummonIssuanceInfo;
 import my.vista.com.handheld.R;
 import my.vista.com.handheld.UI.CustomControl.CustomAlertDialog;
 
@@ -182,7 +183,7 @@ public class MaklumatFragment extends Fragment {
                 if(!etVehicleNo.getText().toString().isEmpty()) {
                     retry = 0;
                     (getView().findViewById(R.id.tvTrafikMessage)).setVisibility(View.GONE);
-                    CheckVehicleNo(etVehicleNo.getText().toString());
+                    CheckVehicleNo(etVehicleNo.getText().toString(), CacheManager.SummonIssuanceInfo);
 
                     mProgressDialog = new ProgressDialog(v.getContext(), R.style.AppTheme_Dialog);
                     mProgressDialog.setIndeterminate(true);
@@ -197,7 +198,7 @@ public class MaklumatFragment extends Fragment {
         return rootView;
     }
 
-    private void CheckVehicleNo(final String vehicleNo) {
+    private void CheckVehicleNo(final String vehicleNo, SummonIssuanceInfo info) {
         String url = CacheManager.ServerKuantanURL + vehicleNo;
         TrustAllCertificates.trustAllHosts();
 
@@ -235,7 +236,7 @@ public class MaklumatFragment extends Fragment {
                                 e.printStackTrace();
                             }
                             retry++;
-                            CheckVehicleNo(vehicleNo);
+                            CheckVehicleNo(vehicleNo, CacheManager.SummonIssuanceInfo);
                         }
                         else {
                             error.printStackTrace();

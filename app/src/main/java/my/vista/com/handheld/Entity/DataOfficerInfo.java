@@ -7,20 +7,17 @@ public class DataOfficerInfo
 	 */
 	public enum ColumnName {
 		ID,
-		USER_ID,
 		NAME,
 		PASSWORD
 	}
 
 	/** The Code. */
 	public String ID;
-	public String UserID;
 	public String Name;
 	public String Password;
 	
-	public DataOfficerInfo(String id, String userID, String name, String password) {
+	public DataOfficerInfo(String id, String name, String password) {
 		this.ID = id;
-		this.UserID = userID;
 		this.Name = name;
 		this.Password = password;
 	}

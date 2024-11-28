@@ -229,7 +229,7 @@ public class UploadNoticeService extends Service {
             }
 
             // Define the server URL for the upload request
-            String url = CacheManager.ServerKNURL + "UploadImageString";
+            String url = CacheManager.ServerURL + "UploadImageString";
 
             // Trust all certificates (use with caution)
             TrustAllCertificates.trustAllHosts();
