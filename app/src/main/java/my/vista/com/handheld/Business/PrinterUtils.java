@@ -349,13 +349,16 @@ public final class PrinterUtils
             doc.DrawTextFlow(130, 20, 40, 670, "C", "MAJLIS BANDARAYA KUANTAN");
             doc.DrawTextFlow(130, 45, 35, 670, "C", "NOTIS KESALAHAN SERTA TAWARAN KOMPAUN");
 
-            doc.DrawBarcode128(0, 200, 70, info.NoticeSerialNo);
-            doc.DrawBarcode128(500, 0, 70, info.NoticeSerialNo);
+            doc.DrawBarcode128(10, 200, 70, info.NoticeSerialNo);
+            doc.DrawBarcode128(500, 0, 70, "H76255");
 
             doc.DrawText(10, 100, 30,   "NO. KOMPAUN");
-            doc.DrawText(10, 40, 35, info.NoticeSerialNo);
+            doc.DrawText(500, 0, 30, "KOD HASIL");
 
-            doc.DrawText(10, 50, 20, "TARIKH");
+            doc.DrawText(10, 40, 35, info.NoticeSerialNo);
+            doc.DrawText(500, 0, 35, "H76255");
+
+            doc.DrawText(10, 60, 20, "TARIKH");
             doc.DrawText(230, 0, 25, ": " + CacheManager.GetDateString(info.OffenceDateTime));
             doc.DrawText(10, 30, 20, "WAKTU");
             doc.DrawText(230, 0, 25, ": " + CacheManager.GetTimeString(info.OffenceDateTime));
@@ -398,7 +401,15 @@ public final class PrinterUtils
             doc.DrawText(10, 30, 20, "LOKASI");
             doc.DrawText(230, 0, 25, ": " + location);
 
-            doc.DrawText(0, 60, 20, "PERUNTUKAN UNDANG-UNDANG :");
+            doc.DrawText(10, 30, 20, "NO PETAK");
+            doc.DrawText(230, 0, 25, ": " + "");
+
+            doc.DrawTextFlow(0, 60, 30, 800, "J",
+                    "SILA AMBIL PERHATIAN BAHAWA TUNA/PUAN SEPERTIMANA " +
+                            "TARIKH DAN WAKTU YANG DINYATAKAN TUAN/PUAN TELAH " +
+                            "DIDAPATI MELAKUKAN KESALAHAN SEPERTI BERIKUT: ");
+
+            doc.DrawText(0, 120, 20, "PERUNTUKAN UNDANG-UNDANG :");
             doc.DrawText(50, 30, 25, info.OffenceAct);
 
             doc.DrawText(0, 60, 20, "SEKSYEN / KAEDAH / PERINTAH :");
@@ -407,87 +418,59 @@ public final class PrinterUtils
             doc.DrawText(0, 60, 20, "KESALAHAN :");
             doc.DrawTextFlow(50, 30, 25, 700, "J", info.Offence);
 
-            doc.DrawText(0, 110, 20, "BUTIR-BUTIR");
-            doc.DrawText(0, 60, 20, "DIKELUARKAN OLEH");
+            doc.DrawText(0, 150, 20, "DIKELUARKAN OLEH");
             doc.DrawText(230, 0, 25, ": " + CacheManager.officerId);
 
-            doc.DrawText(0, 60, 20, "PENGUATKUASA/ WARDEN LALU LINTAS");
-            doc.DrawText(500, 0, 20, "TARIKH : " + CacheManager.GetDateString(new Date()));
+            doc.DrawText(0, 30, 20, "KOD SAKSI");
+            doc.DrawText(230, 0, 25, ": " + "TIADA");
 
-            doc.DrawTextFlow(0, 60, 25, 800, "J",
-                    "KEPADA PEMANDU/PEMILIK KENDERAAN BERNOMBOR SEPERTI DI ATAS, " +
-                    "DENGAN INI DIBERITAHU BAHAWA PADA TARIKH NOTIS INI, KESALAHAN " +
-                    "SEPERTIMANA BUTIR-BUTIR DI ATAS, TELAH DILAKUKAN DENGAN KESALAHAN " +
-                    "DI TEMPAT DAN WAKTU YANG DINYATAKAN.");
 
-            doc.DrawText(0, 130, 25, "-----------------------------------------------");
-
-            doc.DrawTextFlow(0, 30, 30, 800, "C", "TAWARAN MENGKOMPAUN");
-
-            doc.DrawTextFlow(0, 60, 25, 800, "J",
-                    "Pada menjalankan kuasa yang diberi oleh perenggan 120 (1)(e) Akta Pengangkutan Jalan " +
-                            "1987 (Akta 333), saya bersedia dan dengan ini menawarkan untuk mengkompaunkan " +
-                            "dengan kesalahan ini dengan bayaran wang sebagaimana berikut :");
-
-            doc.DrawText(0, 110, 25, "Kadar Bayaran Kompaun");
-
-            if (info.CompoundAmountDesc1 != null && info.CompoundAmountDesc1.length() != 0) {
-                doc.DrawTextFlow(0, 60, 20, 250, "C", info.CompoundAmountDesc1);
-                if (info.CompoundAmountDesc2 != null && info.CompoundAmountDesc2.length() != 0) {
-                    doc.DrawTextFlow(280, 0, 20, 250, "C", info.CompoundAmountDesc2);
-                }
-                if (info.CompoundAmountDesc3 != null && info.CompoundAmountDesc3.length() != 0) {
-                    doc.DrawTextFlow(560, 0, 20, 250, "C", info.CompoundAmountDesc3);
-                }
-            }
-            if (info.CompoundAmountDesc1 != null && info.CompoundAmountDesc1.length() != 0) {
-                doc.DrawTextFlow(0, 30, 25, 250, "C", "RM " + String.format("%.2f", info.CompoundAmount1));
-                if (info.CompoundAmountDesc2 != null && info.CompoundAmountDesc2.length() != 0) {
-                    doc.DrawTextFlow(280, 0, 25, 250, "C", "RM " + String.format("%.2f", info.CompoundAmount2));
-                }
-                if (info.CompoundAmountDesc3 != null && info.CompoundAmountDesc3.length() != 0) {
-                    doc.DrawTextFlow(560, 0, 25, 250, "C", "RM " + String.format("%.2f", info.CompoundAmount3));
-                }
-            }
-
-            doc.DrawTextFlow(0, 60, 25, 800, "J",
-                    "Tuan/Puan bolehlah menyempurnakan tawaran mengkompaun tersebut dengan membuat " +
-                            "bayaran secara:-");
-
-            doc.DrawText(30, 90, 25, "(a)");
-            doc.DrawText(60, 0, 25, "Tunai : atau");
-
-            doc.DrawText(30, 60, 25, "(b)");
-
-            doc.DrawTextFlow(60, 0, 25, 740, "J",
-                    "Kiriman wang, wang pos, perintah juruwang, cek jurubank atau bank draf yang " +
-                            " dibuat untuk dibayar atas nama Datuk Bandar Majlis Bandaraya Kuala Terengganu " +
-                            " dan dipalang \"Akaun Penerima Sahaja\"");
-
-            doc.DrawTextFlow(60, 110, 25, 740, "J",
-                    "Sebagaimana tempat dan alamat serta pada waktu yang dinyatakan di belakang " +
-                            " Tawaran Mengkompaun ini.");
-
-            doc.DrawTextFlow(0, 110, 25, 760, "J",
-                    "Tawaran ini habis tempoh selepas empat belas (14) hari dari tarikh notis ini dan jika bayaran " +
-                            "bayaran penuh yang ditetapkan bagi tawaran mengkompaun kesalahan ini tidak diterima " +
-                            "dalam tempoh tersebut, tindakan penguatkuasaan undang-undang akan dibuat mengenai " +
-                            "kesalahan tersebut.");
-
-            doc.DrawTextFlow(400, 170, 25, 400, "C",
-                    "Saya yang menurut perintah");
-
-            doc.DrawImageName(420,20,"sign.png");
-
-            doc.DrawTextFlow(0, 50, 25, 400, "L",
-                    "Catitan : .......................................\\&" +
-                            "....................................................");
-
-            doc.DrawTextFlow(400, 30, 25, 400, "C",
+            doc.DrawTextFlow(0, 130, 25, 400, "C",
                     ".....................................................\\&" +
-                            "Wan Marahakim Bin Wan Salleh\\&" +
-                            "Pengarah Undang-Undang\\&" +
-                            "Majlis Bandaraya Kuala Terengganu");
+                            "b.p. DATUK BANDAR\\&" +
+                            "MAJLIS BANDARAYA KUANTAN");
+
+
+            doc.DrawText(0, 100, 25, "-----------------------------------------------");
+
+            doc.DrawText(0, 50, 23, "NO. KOMPAUN");
+            doc.DrawText(230, 0, 23, ": " + info.NoticeSerialNo);
+
+            doc.DrawText(420, 0, 23, "SEKSYEN KESALAHAN");
+            doc.DrawText(680, 0, 23, ": " + "4");
+
+            doc.DrawText(0, 30, 23, "TARIKH");
+            doc.DrawText(230, 0, 23, ": " + CacheManager.GetDateString(info.OffenceDateTime));
+
+            doc.DrawText(420, 0, 23, "KOD HASIL");
+            doc.DrawText(680, 0, 23, ": " + "H76255");
+
+            doc.DrawText(0, 30, 23, "NO KENDERAAN");
+            doc.DrawText(230, 0, 23, ": " + info.VehicleNo);
+
+            doc.DrawTextFlow(0, 60, 30, 800, "J",
+                    "TAWARAN UNTUK MENGKOMPAUN KESALAHAN INI " +
+                            "BERKUATKUASA DARI TARIKH NOTIS INI DIKELUARKAN. JIKA " +
+                            "SEKIRANYA KOMPAUN INI TIDAK DIJELASKAN DALAM TEMPOH " +
+                            "TERSEBUT MAKA TINDIKAN UNDANG - UNDANG AKAN " +
+                            "DITERUSKAN. ");
+
+            if (info.CompoundAmountDesc1 != null && info.CompoundAmountDesc1.length() != 0) {
+                doc.DrawTextFlow(0, 200, 30, 400, "C", info.CompoundAmountDesc1);
+                if (info.CompoundAmountDesc2 != null && info.CompoundAmountDesc2.length() != 0) {
+                    doc.DrawTextFlow(400, 0, 30, 400, "C", info.CompoundAmountDesc2);
+                }
+            }
+            if (info.CompoundAmountDesc1 != null && info.CompoundAmountDesc1.length() != 0) {
+                doc.DrawTextFlow(0, 30, 40, 400, "C", "RM " + String.format("%.2f", info.CompoundAmount1));
+                if (info.CompoundAmountDesc2 != null && info.CompoundAmountDesc2.length() != 0) {
+                    doc.DrawTextFlow(400, 0, 40, 400, "C", "RM " + String.format("%.2f", info.CompoundAmount2));
+                }
+            }
+
+            doc.DrawTextFlow(0, 60, 28, 800, "J",
+                    "Tempoh bayaran kompaun dikira dari tarikh kesalahan dilakukan " +
+                            "termasuk hari ahad dan hari kelepasan Am ");
 
             if(info.IsClamping.equalsIgnoreCase("True")) {
                 doc.DrawTextFlow(0, 150, 20, 800, "C", "KENDERAAN TELAH DIKUNCI TAYAR");
