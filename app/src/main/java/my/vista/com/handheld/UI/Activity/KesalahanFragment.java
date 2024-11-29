@@ -92,7 +92,7 @@ public class KesalahanFragment extends Fragment {
                     {
                         BaseEntity entity = listSection.get(pos - 1);
                         List<String> list = DbLocal.GetListForOffenceSectionCodeSpinnerNew(CacheManager.mContext, entity.Code, spinnerOffenceAct.getSelectedItem().toString());
-                        etKesalahan.setText(list.get(2));
+                        etKesalahan.setText(list.get(1));
                     }
                     catch (Exception e) {
                         etKesalahan.setText("");

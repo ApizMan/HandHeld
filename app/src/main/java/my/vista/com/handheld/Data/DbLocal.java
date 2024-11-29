@@ -178,7 +178,7 @@ public class DbLocal
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 		
-		String sqlCommand = "SELECT OA.ID, OA.DESCRIPTION, OS.SECTION_NO, OS.SUBSECTION_NO FROM OFFENCE_ACT OA, OFFENCE_SECTION OS WHERE OA.ID = OS.ACT_ID AND OA.SHORT_DESCRIPTION = '" + offenceActShortDesc + "' ORDER BY OS.SECTION_NO";
+		String sqlCommand = "SELECT OA.ID, OA.DESCRIPTION, OS.NO_CODE, OS.SUBSECTION_NO FROM OFFENCE_ACT OA, OFFENCE_SECTIONS OS WHERE OA.ID = OS.OFFENCE_ACT_CODE AND OA.SHORT_DESCRIPTION = '" + offenceActShortDesc + "' ORDER BY OS.NO_CODE";
 		Cursor cur = obj.Query(sqlCommand, null);
 
 		if( (cur != null) && cur.moveToFirst() )
@@ -200,7 +200,7 @@ public class DbLocal
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 
-		String sqlCommand = "SELECT OA.ID, OS.ID, OA.DESCRIPTION, OS.SECTION_NO, OS.SUBSECTION_NO FROM OFFENCE_ACT OA, OFFENCE_SECTION OS WHERE OA.ID = OS.ACT_ID AND OA.SHORT_DESCRIPTION = '" + offenceActShortDesc + "' ORDER BY OS.SECTION_NO";
+		String sqlCommand = "SELECT OA.ID, OS.ID, OA.DESCRIPTION, OS.NO_CODE, OS.SUBSECTION_NO FROM OFFENCE_ACT OA, OFFENCE_SECTIONS OS WHERE OA.ID = OS.OFFENCE_ACT_CODE AND OA.SHORT_DESCRIPTION = '" + offenceActShortDesc + "' ORDER BY OS.NO_CODE";
 		Cursor cur = obj.Query(sqlCommand, null);
 
 		if( (cur != null) && cur.moveToFirst() )
@@ -225,7 +225,7 @@ public class DbLocal
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 
-		String sqlCommand = "SELECT OS.ACT_ID, OS.ID, OS.DESCRIPTION, OS.SECTION_NO, OS.SUBSECTION_NO, OS.RESULT_CODE FROM OFFENCE_SECTION OS, OFFENCE_ACT OA WHERE OA.ID = OS.ACT_ID AND OA.SHORT_DESCRIPTION = '" + offenceActDescription + "' AND OS.ID = '" + offenceSectionCode + "'";
+		String sqlCommand = "SELECT OS.ID, OS.DESCRIPTION, OS.NO_CODE, OS.SUBSECTION_NO, OS.OFFENCE_ACT_CODE FROM OFFENCE_SECTIONS OS, OFFENCE_ACT OA WHERE OA.ID = OS.OFFENCE_ACT_CODE AND OA.SHORT_DESCRIPTION = '" + offenceActDescription + "' AND OS.ID = '" + offenceSectionCode + "'";
 		Cursor cur = obj.Query(sqlCommand, null);
 
 		if( (cur != null) && cur.moveToFirst() )
@@ -236,8 +236,8 @@ public class DbLocal
 				list.add(cur.getString(0));
 				list.add(cur.getString(1));
 				list.add(cur.getString(2));
-				list.add(cur.getString(3) + " " +cur.getString(4));
-				list.add(cur.getString(5));
+				list.add(cur.getString(3));
+				list.add(cur.getString(4));
 			} while (cur.moveToNext());
 			cur.close();
 		}
@@ -254,7 +254,7 @@ public class DbLocal
 		{
 			String sqlCommand = "SELECT ZONE1, AMOUNT1, SMALL_AMOUNT1, DESC1, ZONE2, AMOUNT2, SMALL_AMOUNT2, DESC2, ZONE3, " +
 					"AMOUNT3, SMALL_AMOUNT3, DESC3, ZONE4, AMOUNT4, SMALL_AMOUNT4, DESC4, " +
-					"MAX_AMOUNT FROM OFFENCE_SECTION WHERE ACT_ID = '" + offenceActCode + "' AND ID = '" + offenceSectionCode + "'";
+					"MAX_AMOUNT FROM OFFENCE_SECTIONS WHERE OFFENCE_ACT_CODE = '" + offenceActCode + "' AND ID = '" + offenceSectionCode + "'";
 			cur = obj.Query(sqlCommand, null);
 	
 			if( (cur != null) && cur.moveToFirst() )
@@ -300,7 +300,7 @@ public class DbLocal
 		Cursor cur = null;
 		try
 		{
-			String sqlCommand = "SELECT SECTION_NO, SUBSECTION_NO, DESCRIPTION FROM OFFENCE_SECTION WHERE ACT_ID = '" + offenceActCode + "' AND ID = '" + offenceSectionCode + "'";
+			String sqlCommand = "SELECT NO_CODE, SUBSECTION_NO, DESCRIPTION FROM OFFENCE_SECTIONS WHERE OFFENCE_ACT_CODE = '" + offenceActCode + "' AND ID = '" + offenceSectionCode + "'";
 			cur = obj.Query(sqlCommand, null);
 
 			if( (cur != null) && cur.moveToFirst() )
@@ -489,14 +489,14 @@ public class DbLocal
 					String sNo = info.getString("SNo");
 
 					// Construct the SQL command
-					String sqlCommand = "INSERT INTO OFFENCE_RATE_MASTER (ID, ACT_ID, SECTION_NO, SUBSECTION_NO, DESCRIPTION, " +
+					String sqlCommand = "INSERT INTO OFFENCE_RATE_MASTER (ID, SECTION_CODE, SECTION_NO, " +
 							"ZONE1, ZONE2, ZONE3, ZONE4, AMOUNT1, AMOUNT2, AMOUNT3, AMOUNT4, SMALL_AMOUNT1, SMALL_AMOUNT2, " +
 							"SMALL_AMOUNT3, SMALL_AMOUNT4, DESC1, DESC2, DESC3, DESC4, MAX_AMOUNT, RESULT_CODE) VALUES " +
-							"('" + sNo + "', '" + actCode + "', '" + sectionCode + "', NULL, '', " +
+							"(" + actCode + ", '" + sectionCode + "', '" + sNo + "', " +
 							zone1 + ", " + zone2 + ", " + zone3 + ", " + zone4 + ", " +
 							amount1 + ", " + amount2 + ", " + amount3 + ", " + amount4 + ", NULL, NULL, " +
 							"NULL, NULL, '" + amountDesc1 + "', '" + amountDesc2 + "', '" + amountDesc3 + "', '" +
-							amountDesc4 + "', " + maxCompoundAmount + ", NULL)";
+							amountDesc4 + "', " + maxCompoundAmount + ", NULL " + ")";
 
 					cur = obj.Query(sqlCommand, null);
 
@@ -532,7 +532,7 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFENCE_LOCATION_AREA (ID, DESCRIPTION) VALUES " +
+					String sqlCommand = "INSERT INTO OFFENCE_AREA (ID, DESCRIPTION) VALUES " +
 							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
@@ -567,7 +567,7 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFENCE_LOCATION (CODE, OFFENCE_LOCATION_AREA_CODE, DESCRIPTION) VALUES " +
+					String sqlCommand = "INSERT INTO OFFENCE_LOCATION (ID, AREA_ID, DESCRIPTION) VALUES " +
 							"('" + info.getString("Code") + "', '" + info.getString("OffenceLocationAreaCode") + "', '" +
 							info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
@@ -601,10 +601,10 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFENCE_SECTIONS (ID, OFFENCE_ACT_CODE, NO, SUBSECTION_NO, DESCRIPTION) VALUES " +
-							"('" + info.getString("Code") + "', '" + info.getString("OffenceActCode") + "', '" +
-							info.getString("No") + "', '" + info.optString("SubsectionNo", "") + "', '" +
-							info.getString("Description") + "')";
+					String sqlCommand = "INSERT INTO OFFENCE_SECTIONS (ID, DESCRIPTION, NO_CODE, SUBSECTION_NO, OFFENCE_ACT_CODE) VALUES " +
+							"(" + info.getString("Code") + ", '" + info.getString("Description") + "', '" +
+							info.getString("No") + "', '" + info.optString("SubsectionNo", "") + "', " +
+							info.getString("OffenceActCode") + ")";
 
 					cur = obj.Query(sqlCommand, null);
 
