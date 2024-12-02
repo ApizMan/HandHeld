@@ -63,14 +63,15 @@ public class UploadNoticeService extends Service {
                             params.put("VehicleNo", info.VehicleNo);
                             params.put("OffenceDateString", CacheManager.GetOffenceDateString(info.OffenceDateTime));
                             params.put("OfficerID", info.OfficerId);
+                            params.put("OfficerSaksi", "TIADA");
                             params.put("HandheldCode", info.HandheldCode);
                             params.put("VehicleType", info.VehicleType);
                             params.put("VehicleMakeModel", info.VehicleMakeModel);
                             params.put("VehicleColor", info.VehicleColor);
                             params.put("RoadTaxNo", info.RoadTaxNo);
                             params.put("OffenceActCode", info.OffenceActCode);
-                            params.put("OffenceSectionCode", info.OffenceSectionCode);
-                            params.put("OffenceArea", info.OffenceLocationArea);
+                            params.put("OffenceSectionCode", info.OffenceActCode);
+                            params.put("OffenceLocationArea", info.OffenceLocationArea);
                             params.put("OffenceLocation", info.OffenceLocation);
                             params.put("OffenceLocationDetails", info.OffenceLocationDetails);
                             params.put("CompoundAmount", String.valueOf(info.CompoundAmount));
@@ -81,11 +82,12 @@ public class UploadNoticeService extends Service {
                             params.put("ImageName5", info.ImageLocation5);
                             params.put("IsClamping", info.IsClamping);
                             params.put("Notes", info.Notes);
-                            params.put("OfficerUnit", info.OfficerUnit);
-                            params.put("Latitude", info.Latitude);
-                            params.put("Longitude", info.Longitude);
+                            params.put("SquarePoleNo", "SQP001");
+//                            params.put("Latitude", info.Latitude);
+//                            params.put("Longitude", info.Longitude);
 
                             String url = CacheManager.ServerURL + "UploadNotice";
+                            TrustAllCertificates.trustAllHosts();
                             JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
                                     new Response.Listener<JSONObject>() {
                                         @Override

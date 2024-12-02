@@ -204,7 +204,7 @@ public class KesalahanFragment extends Fragment {
 
                 CacheManager.SummonIssuanceInfo.OffenceActCode  = list.get(0);
                 CacheManager.SummonIssuanceInfo.OffenceSectionCode  = list.get(1);
-                CacheManager.SummonIssuanceInfo.OffenceSection = list.get(3);
+                CacheManager.SummonIssuanceInfo.OffenceSection = list.get(2);
                 CacheManager.SummonIssuanceInfo.ResultCode = list.get(4);
             }
             catch (Exception e) {

@@ -133,7 +133,7 @@ public class DbLocal
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 
-		String sqlCommand = "SELECT DISTINCT OL.DESCRIPTION FROM OFFENCE_LOCATION OL, OFFENCE_AREA OA WHERE OA.ID = OL.AREA_ID AND OA.DESCRIPTION = '" + strlocation + "' ORDER BY OL.DESCRIPTION";
+		String sqlCommand = "SELECT DISTINCT OL.DESCRIPTION FROM OFFENCE_LOCATION OL, OFFENCE_AREA OA WHERE OA.ID = OL.AREA_ID" + " ORDER BY OL.DESCRIPTION";
 
 		Cursor cur = obj.Query(sqlCommand, null);
 
@@ -244,27 +244,30 @@ public class DbLocal
 		obj.Close();
 		return list;
 	}
-	
-	public static Cursor GetCompoundAmountDescription(Context context, String offenceSectionCode, String offenceActCode)
-	{	
+
+	public static Cursor GetCompoundAmountDescription(Context context, String offenceSectionCode, String offenceActCode) {
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 		Cursor cur = null;
-		try
-		{
-			String sqlCommand = "SELECT ZONE1, AMOUNT1, SMALL_AMOUNT1, DESC1, ZONE2, AMOUNT2, SMALL_AMOUNT2, DESC2, ZONE3, " +
-					"AMOUNT3, SMALL_AMOUNT3, DESC3, ZONE4, AMOUNT4, SMALL_AMOUNT4, DESC4, " +
-					"MAX_AMOUNT FROM OFFENCE_SECTIONS WHERE OFFENCE_ACT_CODE = '" + offenceActCode + "' AND ID = '" + offenceSectionCode + "'";
-			cur = obj.Query(sqlCommand, null);
-	
-			if( (cur != null) && cur.moveToFirst() )
-			{			
-				//cur.close();
-	        }
-		}
-		catch(Exception ex)
-		{
-			
+		try {
+			String sqlCommand =
+					"SELECT orm.ZONE1, orm.AMOUNT1, orm.SMALL_AMOUNT1, orm.DESC1, " +
+							"orm.ZONE2, orm.AMOUNT2, orm.SMALL_AMOUNT2, orm.DESC2, " +
+							"orm.ZONE3, orm.AMOUNT3, orm.SMALL_AMOUNT3, orm.DESC3, " +
+							"orm.ZONE4, orm.AMOUNT4, orm.SMALL_AMOUNT4, orm.DESC4, " +
+							"orm.MAX_AMOUNT, os.Description AS OffenceDescription " +
+							"FROM OFFENCE_RATE_MASTER orm " +
+							"JOIN OFFENCE_SECTIONS os ON orm.SECTION_CODE = os.ID " +
+							"WHERE orm.SECTION_CODE = ? AND os.DESCRIPTION = ?";
+
+			String[] selectionArgs = new String[] { offenceActCode, offenceSectionCode };
+			cur = obj.Query(sqlCommand, selectionArgs);
+
+			if (cur != null && cur.moveToFirst()) {
+				// Process data as needed
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		obj.Close();
 		return cur;
@@ -471,7 +474,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					// Prepare SQL values, handle nulls and type conversions
-					String actCode = info.getString("ActCode");
+					int actCode = info.getInt("ActCode");
 					String sectionCode = info.getString("SectionCode");
 					String zone1 = info.optString("Zone1", "NULL");
 					String zone2 = info.optString("Zone2", "NULL");
@@ -481,6 +484,10 @@ public class DbLocal
 					String amount2 = info.optString("Amount2", "NULL");
 					String amount3 = info.optString("Amount3", "NULL");
 					String amount4 = info.optString("Amount4", "NULL");
+					String smallAmount1 = info.optString("Amount11", "NULL");
+					String smallAmount2 = info.optString("Amount21", "NULL");
+					String smallAmount3 = info.optString("Amount31", "NULL");
+					String smallAmount4 = info.optString("Amount41", "NULL");
 					String amountDesc1 = info.optString("AmountDesc1", "");
 					String amountDesc2 = info.optString("AmountDesc2", "");
 					String amountDesc3 = info.optString("AmountDesc3", "");
@@ -489,13 +496,13 @@ public class DbLocal
 					String sNo = info.getString("SNo");
 
 					// Construct the SQL command
-					String sqlCommand = "INSERT INTO OFFENCE_RATE_MASTER (ID, SECTION_CODE, SECTION_NO, " +
+					String sqlCommand = "INSERT INTO OFFENCE_RATE_MASTER (ACT_CODE, SECTION_CODE, SECTION_NO, " +
 							"ZONE1, ZONE2, ZONE3, ZONE4, AMOUNT1, AMOUNT2, AMOUNT3, AMOUNT4, SMALL_AMOUNT1, SMALL_AMOUNT2, " +
 							"SMALL_AMOUNT3, SMALL_AMOUNT4, DESC1, DESC2, DESC3, DESC4, MAX_AMOUNT, RESULT_CODE) VALUES " +
 							"(" + actCode + ", '" + sectionCode + "', '" + sNo + "', " +
 							zone1 + ", " + zone2 + ", " + zone3 + ", " + zone4 + ", " +
-							amount1 + ", " + amount2 + ", " + amount3 + ", " + amount4 + ", NULL, NULL, " +
-							"NULL, NULL, '" + amountDesc1 + "', '" + amountDesc2 + "', '" + amountDesc3 + "', '" +
+							amount1 + ", " + amount2 + ", " + amount3 + ", " + amount4 + ", " + smallAmount1 + ", " + smallAmount2 + ", " +
+							smallAmount3 + ", " + smallAmount4 + ", '" + amountDesc1 + "', '" + amountDesc2 + "', '" + amountDesc3 + "', '" +
 							amountDesc4 + "', " + maxCompoundAmount + ", NULL " + ")";
 
 					cur = obj.Query(sqlCommand, null);
@@ -533,7 +540,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO OFFENCE_AREA (ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
+							"(" + info.getString("Code") + ", '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -568,7 +575,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO OFFENCE_LOCATION (ID, AREA_ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("Code") + "', '" + info.getString("OffenceLocationAreaCode") + "', '" +
+							"('" + info.getString("Code") + "', " + info.getString("OffenceLocationAreaCode") + ", '" +
 							info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
@@ -1270,8 +1277,6 @@ public class DbLocal
 				info.IsClamping = cur.getString(21);
 				info.Notes = cur.getString(22);
 				info.OfficerUnit = cur.getString(23);
-				info.Latitude = cur.getDouble(24);
-				info.Longitude = cur.getDouble(25);
 
 				list.add(info);
 			} while (cur.moveToNext());

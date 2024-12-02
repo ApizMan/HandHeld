@@ -499,6 +499,7 @@ public class LoginActivity extends Activity {
 			ClearFileData();
 			CacheManager.SummonIssuanceInfo = new SummonIssuanceInfo();
 			CacheManager.UserId = txtUserName.getText().toString();
+			CacheManager.saveOfficerId(CacheManager.UserId); // Save to persistent storage
 			CacheManager.officerUnit = spinnerUnit.getSelectedItem().toString();
 			Intent i = new Intent(this, NoticeIssuanceActivity.class);
 			startActivity(i);

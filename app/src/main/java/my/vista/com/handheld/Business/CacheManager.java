@@ -130,6 +130,20 @@ public final class CacheManager
 	public static void initialize(Context context) {
 		mContext = context;
 		loadDeviceId();
+		loadOfficerId();
+	}
+
+	public static void saveOfficerId(String officer) {
+		officerId = officer;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("officerId", officer);
+		editor.apply();
+	}
+
+	private static void loadOfficerId() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		officerId = sharedPreferences.getString("officerId", null);
 	}
 
 	public static void saveDeviceId(String device) {
@@ -211,6 +225,7 @@ public final class CacheManager
 			CacheManager.SummonIssuanceInfo.CompoundAmount1 = 0;
 			if (CacheManager.SummonIssuanceInfo.OffenceSectionCode.length() != 0) {
 				Cursor compoundList = DbLocal.GetCompoundAmountDescription(CacheManager.mContext, CacheManager.SummonIssuanceInfo.OffenceSectionCode, CacheManager.SummonIssuanceInfo.OffenceActCode);
+//				Cursor compoundDescriptionList = DbLocal.GetCompoundDescription(mContext, CacheManager.SummonIssuanceInfo.OffenceSectionCode, CacheManager.SummonIssuanceInfo.OffenceActCode);
 				try {
 					if (compoundList != null) {
 						if (Float.parseFloat(compoundList.getString(1)) != 0) {
@@ -241,7 +256,7 @@ public final class CacheManager
 						}
 					}
 				} catch (Exception ex) {
-
+					ex.toString();
 				}
 				CacheManager.SummonIssuanceInfo.CompoundAmountDescription = CacheManager.GenerateCompoundAmountDescription(String.valueOf(CacheManager.SummonIssuanceInfo.CompoundAmount1));
 			}
