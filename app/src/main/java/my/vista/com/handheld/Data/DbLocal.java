@@ -127,7 +127,7 @@ public class DbLocal
 		return list;
 	}
 
-	public static List<String>GetListForOffenceLocationSpinner(Context context, String strlocation)
+	public static List<String>GetListForOffenceLocationSpinner(Context context)
 	{
 		List<String> list = new ArrayList<String>();
 		DbUtils obj = new DbUtils(context);
@@ -1100,7 +1100,7 @@ public class DbLocal
 					image4 = info.ImageLocation.get(3);
 				}
 				if (info.ImageLocation.size() >= 5) {
-					image5 = info.ImageLocation.get(4);
+					image5 = CacheManager.finalImage;
 				}
 			} catch (Exception e) {
 
@@ -1356,8 +1356,6 @@ public class DbLocal
 				info.IsClamping = cur.getString(21);
 				info.Notes = cur.getString(22);
 				info.OfficerUnit = cur.getString(23);
-				info.Latitude = cur.getDouble(24);
-				info.Longitude = cur.getDouble(25);
 
 				list.add(info);
 			} while (cur.moveToNext());

@@ -10,6 +10,7 @@ import java.util.List;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -35,12 +36,16 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import my.vista.com.handheld.Business.CacheManager;
+import my.vista.com.handheld.Entity.SummonIssuanceInfo;
 import my.vista.com.handheld.UI.CustomControl.CustomAlertDialog;
 import my.vista.com.handheld.Data.SettingsHelper;
 import my.vista.com.handheld.R;
+import my.vista.com.handheld.UI.UploadNoticeService;
 
 public class ImageActivity extends AppCompatActivity {
 	private static final int TAKE_PICTURE = 1;
+
+	View rootView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,27 +79,26 @@ public class ImageActivity extends AppCompatActivity {
 			Button btn_capture = (Button) findViewById(R.id.btn_capture);
 			btn_capture.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					// Create directory in Pictures/CustomImageDir for newer Android versions
 					File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
 					if (!dir.exists()) {
 						dir.mkdirs();
 					}
-
 					if (CheckMaximumPicture()) {
 						String delegate = "yy";
 						String year = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
-
-						// Create a file using MediaStore
-						ContentValues values = new ContentValues();
-						values.put(MediaStore.Images.Media.DISPLAY_NAME, SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
-						values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-						values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/CustomImageDir");
-
-						Uri imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-						intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-						CacheManager.ImageUri = imageUri; // Save the image URI
+						File photo = new File(dir, SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
+						try {
+							photo.createNewFile();
+							photo.setReadable(true);
+							photo.setWritable(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+							Log.e("MESSAGE", e.getMessage());
+						}
+						intent.putExtra(MediaStore.EXTRA_OUTPUT,
+								Uri.fromFile(photo));
+						CacheManager.ImageUri = Uri.fromFile(photo);
 						startActivityForResult(intent, TAKE_PICTURE);
 					}
 				}
@@ -175,7 +179,7 @@ public class ImageActivity extends AppCompatActivity {
 		return null;
 	}
 
-	private void RefreshData()
+	public void RefreshData()
 	{
 		List<String> list = new ArrayList<String>();
 		for(String item : CacheManager.SummonIssuanceInfo.ImageLocation) {
@@ -238,8 +242,8 @@ public class ImageActivity extends AppCompatActivity {
 	private boolean CheckMaximumPicture()
 	{
 		try {
-			if (CacheManager.SummonIssuanceInfo.ImageLocation.size() >= 5) {
-				CustomAlertDialog.Show(this, "GAMBAR", "Hanya 5 gambar dibenarkan. Sila padam yang tidak berkenan.", 0);
+			if (CacheManager.SummonIssuanceInfo.ImageLocation.size() >= 4) {
+				CustomAlertDialog.Show(this, "GAMBAR", "Hanya 4 gambar dibenarkan. Sila padam yang tidak berkenan.", 0);
 				return false;
 			}
 		}
@@ -252,7 +256,7 @@ public class ImageActivity extends AppCompatActivity {
 	private Runnable doSaveImage;
 	private ProgressDialog m_ProgressDialog = null;
 
-	private void DoSaveImage(Uri imageUri)
+	public void DoSaveImage(Uri imageUri)
 	{
 		System.gc();
 
@@ -341,25 +345,27 @@ public class ImageActivity extends AppCompatActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		CacheManager.saveRequestCode(requestCode);
+		CacheManager.saveResultCode(resultCode);
 		switch (requestCode) {
 			case TAKE_PICTURE:
 				if (resultCode == Activity.RESULT_OK) {
 					doSaveImage = new Runnable() {
 						@Override
-						public void run()
-						{
+						public void run() {
 							Looper.prepare();
 
 							String delegate = "yy";
 							String year = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
 
-							CacheManager.SummonIssuanceInfo.ImageLocation.add(SettingsHelper.HandheldCode +  year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
+							CacheManager.SummonIssuanceInfo.ImageLocation.add(SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
 							CacheManager.imageIndex++;
 							DoSaveImage(CacheManager.ImageUri);
 							Looper.loop();
 							Looper.myLooper().quit();
 						}
 					};
+
 					m_ProgressDialog = new ProgressDialog(ImageActivity.this, R.style.AppTheme_Dialog);
 					m_ProgressDialog.setMessage("Saving");
 					m_ProgressDialog.setTitle("");

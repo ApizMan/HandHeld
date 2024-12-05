@@ -346,10 +346,13 @@ public final class PrinterUtils
 
             doc.DrawImageName(-5,0,"small.png");
 
-            doc.DrawTextFlow(130, 20, 40, 670, "C", "MAJLIS BANDARAYA KUANTAN");
-            doc.DrawTextFlow(130, 45, 35, 670, "C", "NOTIS KESALAHAN SERTA TAWARAN KOMPAUN");
+            doc.DrawTextFlow(150, 60, 40, 670, "C", "MAJLIS BANDARAYA KUANTAN");
+            doc.DrawText(200, 50, 25,"NOTIS KESALAHAN SERTA TAWARAN MENGKOMPAUN");
+            doc.DrawText(240, 30, 25,"DI BAWAH PERINTAH PENGANGKUTAN JALAN");
+            doc.DrawText(220, 30, 25,"(PERUNTUKAN MENGENAI TEMPAT LETAK KERETA)");
+            doc.DrawText(270, 30, 25,"MAJLIS PERBANDARAN KUANTAN 2005");
 
-            doc.DrawBarcode128(10, 200, 70, info.NoticeSerialNo);
+            doc.DrawBarcode128(10, 75, 70, info.NoticeSerialNo);
             doc.DrawBarcode128(500, 0, 70, "H76255");
 
             doc.DrawText(10, 100, 30,   "NO. KOMPAUN");

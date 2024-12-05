@@ -38,8 +38,8 @@ import my.vista.com.handheld.Business.VolleySingleton;
  */
 public class UploadNoticeService extends Service {
 
-    private Handler mHandler = new Handler();
-    private Runnable mRun = new Runnable() {
+    private static Handler mHandler = new Handler();
+    public static Runnable mRun = new Runnable() {
         @Override
         public void run() {
             try {
@@ -50,7 +50,7 @@ public class UploadNoticeService extends Service {
                         for(SummonIssuanceInfo info : list) {
                             final SummonIssuanceInfo model = info;
 
-                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddkkmmss");
+                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
                             try {
                                 info.OffenceDateTime = format.parse(info.OffenceDateString);
                             } catch (Exception e) {
@@ -79,7 +79,7 @@ public class UploadNoticeService extends Service {
                             params.put("ImageName2", info.ImageLocation2);
                             params.put("ImageName3", info.ImageLocation3);
                             params.put("ImageName4", info.ImageLocation4);
-                            params.put("ImageName5", info.ImageLocation5);
+                            params.put("ImageName5", CacheManager.finalImage);
                             params.put("IsClamping", info.IsClamping);
                             params.put("Notes", info.Notes);
                             params.put("SquarePoleNo", "SQP001");
@@ -106,8 +106,8 @@ public class UploadNoticeService extends Service {
                                                             UploadImage(model.ImageLocation3);
                                                         if(!model.ImageLocation4.isEmpty())
                                                             UploadImage(model.ImageLocation4);
-                                                        if(!model.ImageLocation5.isEmpty())
-                                                            UploadImage(model.ImageLocation5);
+                                                        if(!CacheManager.finalImage.isEmpty())
+                                                            UploadImage(CacheManager.finalImage);
                                                     }
                                                     try {
                                                         if(response.getString("StatusDescription").toUpperCase().contains("DUPLICATE")) {
@@ -167,7 +167,7 @@ public class UploadNoticeService extends Service {
 
     }
 
-    private void UploadImage(final String imageName) {
+    private static void UploadImage(final String imageName) {
         // Define the directory path
         final File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
 
@@ -309,7 +309,7 @@ public class UploadNoticeService extends Service {
         }
     }
 
-    private void ClearFileData() {
+    private static void ClearFileData() {
         File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
         if (!dir.exists()) {
             dir.mkdirs();
@@ -353,7 +353,7 @@ public class UploadNoticeService extends Service {
         DbLocal.CleanOffenceNoticeMaintenance(CacheManager.mContext);
     }
 
-    public boolean isInternetAvailable() {
+    public static boolean isInternetAvailable() {
         return true;
         /*
         try {
@@ -373,12 +373,12 @@ public class UploadNoticeService extends Service {
         */
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mHandler.postDelayed(mRun, 0);
-
-        return START_STICKY;
-    }
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        mHandler.postDelayed(mRun, 10000);
+//
+//        return START_STICKY;
+//    }
 
     @Override
     public IBinder onBind(Intent intent) {

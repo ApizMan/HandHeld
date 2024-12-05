@@ -48,6 +48,9 @@ public final class CacheManager
 	public static String officerName = "";
 	public static String officerDetails = "";
 	public static String officerUnit = "";
+	public static String finalImage = "";
+	public static int publicRequestCode = 0;
+	public static int publicResultCode = 0;
 
 	public static double Discount = 20;
 	public static double Discount50 = 50;
@@ -131,6 +134,9 @@ public final class CacheManager
 		mContext = context;
 		loadDeviceId();
 		loadOfficerId();
+		loadImage5();
+		loadRequestCode();
+		loadResultCode();
 	}
 
 	public static void saveOfficerId(String officer) {
@@ -159,11 +165,50 @@ public final class CacheManager
 		deviceId = sharedPreferences.getString("deviceId", null);
 	}
 
+	public static void saveRequestCode(int requestCode) {
+		publicRequestCode = requestCode;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putInt("requestCode", requestCode);
+		editor.apply();
+	}
+
+	private static void loadRequestCode() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		publicRequestCode = sharedPreferences.getInt("requestCode", 0);
+	}
+
+	public static void saveResultCode(int resultCode) {
+		publicResultCode = resultCode;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putInt("resultCode", resultCode);
+		editor.apply();
+	}
+
+	private static void loadResultCode() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		publicResultCode = sharedPreferences.getInt("resultCode", 0);
+	}
+
+	public static void saveImage5(String image) {
+		finalImage = image;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("finalImage", image);
+		editor.apply();
+	}
+
+	private static void loadImage5() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		finalImage = sharedPreferences.getString("finalImage", null);
+	}
+
     public static my.vista.com.handheld.Entity.SummonIssuanceInfo updateData(my.vista.com.handheld.Entity.SummonIssuanceInfo info) {
 		try {
 			info.OffenceDateTime = new Date();
 
-			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddkkmmss");
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
 			try {
 				info.OffenceDateTime = format.parse(info.OffenceDateString);
 			} catch (Exception e) {
@@ -446,7 +491,7 @@ public final class CacheManager
 
 	public static String GetStandardDateString(Date date)
 	{
-		String delegate = "yyyyMMddkkmmss";
+		String delegate = "yyyyMMddhhmmaa";
 		if(date != null)
 			return  (String) DateFormat.format(delegate,date);
 		else

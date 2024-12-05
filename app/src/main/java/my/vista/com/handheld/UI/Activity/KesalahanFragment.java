@@ -123,7 +123,7 @@ public class KesalahanFragment extends Fragment {
 
                 spinnerOffenceLocation.getEmptyView();
 
-                list = DbLocal.GetListForOffenceLocationSpinner(CacheManager.mContext, parent.getSelectedItem().toString());
+                list = DbLocal.GetListForOffenceLocationSpinner(CacheManager.mContext);
                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list);
 
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

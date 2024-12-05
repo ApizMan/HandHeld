@@ -62,7 +62,7 @@ public class HistoryActivity extends AppCompatActivity {
 					public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 						selected = (SummonIssuanceInfo) parent.getAdapter().getItem(position);
 						selected = CacheManager.updateData(selected);
-						AlertPrint();
+						AlertPrint(selected);
 					}
 				});
 			} else {
@@ -72,7 +72,7 @@ public class HistoryActivity extends AppCompatActivity {
 		}
 	}
 
-	private void AlertPrint() {
+	private void AlertPrint(my.vista.com.handheld.Entity.SummonIssuanceInfo info) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppTheme_Dialog);
 		builder.setTitle("Salinan Pendua");
 		builder.setMessage("Cetak salinan notis?");
@@ -85,7 +85,7 @@ public class HistoryActivity extends AppCompatActivity {
 					public void run()
 					{
 						Looper.prepare();
-						DoPrint();
+						DoPrint(info);
 						Looper.loop();
 						Looper.myLooper().quit();
 					}
@@ -132,7 +132,7 @@ public class HistoryActivity extends AppCompatActivity {
 		return true;
 	}
 
-	private void DoPrint()
+	private void DoPrint(my.vista.com.handheld.Entity.SummonIssuanceInfo info)
 	{
 		try
 		{

@@ -12,13 +12,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Calendar;
 import java.util.Date;
 
 import my.vista.com.handheld.Business.CacheManager;
@@ -48,6 +52,7 @@ import my.vista.com.handheld.Entity.SummonIssuanceInfo;
 import my.vista.com.handheld.Data.SettingsHelper;
 import my.vista.com.handheld.UI.CustomControl.CustomAlertDialog;
 import my.vista.com.handheld.R;
+import my.vista.com.handheld.UI.UploadNoticeService;
 
 /**
  * Created by hp on 24/7/2016.
@@ -56,6 +61,13 @@ public class RingkasanFragment extends Fragment {
     private Runnable doPrint;
     private ProgressDialog mProgressDialog = null;
     View rootView;
+
+    private static final int TAKE_PICTURE_FINAL = 1;
+
+    private Runnable doSaveImage;
+
+    boolean hasEmptyIndex = false;
+    boolean isUriPresent = false;
 
     public RingkasanFragment() {
     }
@@ -145,7 +157,6 @@ public class RingkasanFragment extends Fragment {
         ImageView iImage2 = (ImageView)rootView.findViewById(R.id.ivSummaryImage2);
         ImageView iImage3 = (ImageView)rootView.findViewById(R.id.ivSummaryImage3);
         ImageView iImage4 = (ImageView)rootView.findViewById(R.id.ivSummaryImage4);
-        ImageView iImage5 = (ImageView)rootView.findViewById(R.id.ivSummaryImage5);
         if(!CacheManager.SummonIssuanceInfo.ImageLocation.isEmpty()) {
             File file = new File(dir, CacheManager.SummonIssuanceInfo.ImageLocation.get(0));
             if (file.exists()) {
@@ -205,22 +216,6 @@ public class RingkasanFragment extends Fragment {
                             iImage4.setImageBitmap(bitmap);
                             System.gc();
                         }
-
-                        if(CacheManager.SummonIssuanceInfo.ImageLocation.size() > 4) {
-                            file = new File(dir, CacheManager.SummonIssuanceInfo.ImageLocation.get(4));
-                            if (file.exists()) {
-                                BitmapFactory.Options options;
-                                Bitmap bitmap = null;
-                                try {
-                                    options = new BitmapFactory.Options();
-                                    bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-                                } catch (Exception ex) {
-                                }
-
-                                iImage5.setImageBitmap(bitmap);
-                                System.gc();
-                            }
-                        }
                     }
                 }
             }
@@ -262,6 +257,82 @@ public class RingkasanFragment extends Fragment {
         FillData();
     }
 
+    private void captureImage4(Context context, SummonIssuanceInfo info) {
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        String delegate = "yy";
+        String year = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photo = new File(dir, SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
+        try {
+            photo.createNewFile();
+            photo.setReadable(true);
+            photo.setWritable(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("MESSAGE", e.getMessage());
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(photo));
+        CacheManager.ImageUri = Uri.fromFile(photo);
+        startActivityForResult(intent, TAKE_PICTURE_FINAL);
+    }
+
+    private void storeCaptureImage4(Uri imageUri) {
+        // Ensure imageUri is not null
+        if (imageUri != null) {
+            // Extract the image file name from the URI
+            String path = imageUri.getPath(); // Get the full path
+            if (path != null && path.contains("/")) {
+                String image5path = path.substring(path.lastIndexOf("/") + 1); // Extract the file name
+
+                // Safely set the value at index 4
+                CacheManager.finalImage = image5path;
+
+                if(!image5path.isEmpty()){
+                    UploadNoticeService.mRun.run();
+                }
+
+            } else {
+                Log.e("storeCaptureImage4", "Invalid image URI path.");
+            }
+        } else {
+            Log.e("storeCaptureImage4", "Image URI is null.");
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (CacheManager.publicRequestCode == TAKE_PICTURE_FINAL) {
+            if (CacheManager.publicResultCode == Activity.RESULT_OK) {
+                doSaveImage = new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+
+                        String delegate = "yy";
+                        String year = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
+
+                        CacheManager.SummonIssuanceInfo.ImageLocation.add(SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
+                        CacheManager.imageIndex++;
+//                        ImageActivity imageActivity = new ImageActivity();
+//                        imageActivity.DoSaveImage(CacheManager.ImageUri);
+                        Looper.loop();
+                        Looper.myLooper().quit();
+                    }
+                };
+                storeCaptureImage4(CacheManager.ImageUri);
+
+                Thread thread = new Thread(null, doSaveImage, "LoginProcess");
+                thread.start();
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -294,6 +365,15 @@ public class RingkasanFragment extends Fragment {
                                 Looper.myLooper().quit();
                             }
                         };
+
+                        final Handler timeHandler = new Handler();
+                        Runnable run = new Runnable() {
+                            @Override
+                            public void run() {
+                                captureImage4(getActivity(), CacheManager.SummonIssuanceInfo);
+                            }
+                        };
+                        timeHandler.postDelayed(run, 2000);
 
                         mProgressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dialog);
                         mProgressDialog.setMessage("Loading");
