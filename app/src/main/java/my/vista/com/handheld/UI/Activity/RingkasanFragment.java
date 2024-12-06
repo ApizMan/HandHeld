@@ -453,7 +453,7 @@ public class RingkasanFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int id) {
                     CacheManager.IsNewNotice = true;
                     System.gc();
-                    ClearFileData();
+//                    ClearFileData();
                     Intent i = new Intent(getActivity(), NoticeIssuanceActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     getActivity().startActivity(i);
@@ -855,11 +855,11 @@ public class RingkasanFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-                        try {
-                            MovePictures();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            MovePictures();
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
 
                         AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
                     } else {

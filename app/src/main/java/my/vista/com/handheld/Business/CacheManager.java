@@ -208,7 +208,7 @@ public final class CacheManager
 		try {
 			info.OffenceDateTime = new Date();
 
-			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssaa");
 			try {
 				info.OffenceDateTime = format.parse(info.OffenceDateString);
 			} catch (Exception e) {
@@ -447,7 +447,7 @@ public final class CacheManager
 
 	public static String GetOffenceDateString(Date date)
 	{
-		String delegate = "yyyyMMddhhmmaa";
+		String delegate = "yyyyMMddhhmmssaa";
 		if(date != null)
 			return ((String) DateFormat.format(delegate,date)).toUpperCase().replace(".", "");
 		else
@@ -491,7 +491,7 @@ public final class CacheManager
 
 	public static String GetStandardDateString(Date date)
 	{
-		String delegate = "yyyyMMddhhmmaa";
+		String delegate = "yyyyMMddhhmmssaa";
 		if(date != null)
 			return  (String) DateFormat.format(delegate,date);
 		else

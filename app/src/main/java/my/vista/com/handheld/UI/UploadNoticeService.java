@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,37 +45,50 @@ public class UploadNoticeService extends Service {
         public void run() {
             try {
                 try {
-                    ClearFileData();
+//                    ClearFileData();
                     if(isInternetAvailable()) {
                         ArrayList<SummonIssuanceInfo> list = DbLocal.GetSummonsPending(CacheManager.mContext);
                         for(SummonIssuanceInfo info : list) {
                             final SummonIssuanceInfo model = info;
 
-                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
+                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssaa");
                             try {
                                 info.OffenceDateTime = format.parse(info.OffenceDateString);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
+                            // Parse the offence date
+                            Date offenceDate = format.parse(info.OffenceDateString);
+
+                            // Add 30 days
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(offenceDate);
+                            calendar.add(Calendar.DAY_OF_YEAR, 30);
+
+                            // Format the expiry date back to the required string format
+                            String compoundExpiryDateString = format.format(calendar.getTime());
+
                             final int id = info.NoticeId;
                             Map<String, Object> params = new HashMap<>();
                             params.put("NoticeNo", info.NoticeSerialNo);
                             params.put("VehicleNo", info.VehicleNo);
                             params.put("OffenceDateString", CacheManager.GetOffenceDateString(info.OffenceDateTime));
+                            params.put("CompoundExpiryDateString", compoundExpiryDateString);
                             params.put("OfficerID", info.OfficerId);
+                            params.put("OfficerUnit", info.OfficerUnit);
                             params.put("OfficerSaksi", "TIADA");
                             params.put("HandheldCode", info.HandheldCode);
                             params.put("VehicleType", info.VehicleType);
                             params.put("VehicleMakeModel", info.VehicleMakeModel);
                             params.put("VehicleColor", info.VehicleColor);
                             params.put("RoadTaxNo", info.RoadTaxNo);
-                            params.put("OffenceActCode", info.OffenceActCode);
-                            params.put("OffenceSectionCode", info.OffenceActCode);
+                            params.put("OffenceActCode", Integer.parseInt(info.OffenceActCode));
+                            params.put("OffenceSectionCode", Integer.parseInt(info.OffenceActCode));
                             params.put("OffenceLocationArea", info.OffenceLocationArea);
                             params.put("OffenceLocation", info.OffenceLocation);
                             params.put("OffenceLocationDetails", info.OffenceLocationDetails);
-                            params.put("CompoundAmount", String.valueOf(info.CompoundAmount));
+                            params.put("CompoundAmount", info.CompoundAmount);
                             params.put("ImageName1", info.ImageLocation1);
                             params.put("ImageName2", info.ImageLocation2);
                             params.put("ImageName3", info.ImageLocation3);
@@ -167,6 +181,26 @@ public class UploadNoticeService extends Service {
 
     }
 
+    private static String convertImageToBase64(String imagePath) {
+        File imageFile = new File(imagePath);
+        if (!imageFile.exists()) {
+            System.err.println("File not found: " + imagePath);
+            return null;
+        }
+
+        try (FileInputStream fileInputStream = new FileInputStream(imageFile)) {
+            // Read the file into a byte array
+            byte[] imageBytes = new byte[(int) imageFile.length()];
+            fileInputStream.read(imageBytes);
+
+            // Convert the byte array to a Base64 string
+            return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private static void UploadImage(final String imageName) {
         // Define the directory path
         final File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
@@ -180,119 +214,90 @@ public class UploadNoticeService extends Service {
         final File file = new File(dir, imageName);
 
         // Ensure the file exists and is not empty
-        if (file.exists() && file.length() > 0) {
-            final long fileLength = file.length();
+        if (file.exists()) {
             FileInputStream fileInputStream = null;
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             byte[] byteArrayImage = null;
             String imageData = "";
 
-            try {
-                // Open the file input stream
-                fileInputStream = new FileInputStream(file);
-                byte[] buffer = new byte[8192];  // Buffer for reading the file
-                int bytesRead;
+            // Convert image to Base64
+            String base64Image = convertImageToBase64(file.getAbsolutePath());
+                System.out.println("Base64 Encoded Image: " + base64Image);
 
-                // Read the file and write to ByteArrayOutputStream
-                while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                    output.write(buffer, 0, bytesRead);
-                }
-
-                // Convert the output stream to a byte array
-                byteArrayImage = output.toByteArray();
-
-                // Encode the byte array to Base64 string
-                imageData = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-
-                // Log the Base64 encoded image data for debugging
-                Log.d("ImageData", "Base64 Encoded Image: " + imageData);
-                Log.d("ImageData", "Image Data Size: " + byteArrayImage.length);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                // Ensure input stream is closed
+                // Create a JSON object with the image name and Base64 string
+                JSONObject obj = new JSONObject();
                 try {
-                    if (fileInputStream != null) {
-                        fileInputStream.close();
-                    }
-                } catch (IOException e) {
+                    obj.put("ImageName", imageName);
+                    obj.put("ImageData", base64Image);
+
+                    // You can now send this JSON object to your server
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
 
-            // Prepare JSON object with image data
-            JSONObject obj = new JSONObject();
-            try {
-                obj.put("ImageName", imageName);
-                obj.put("ImageData", imageData);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+                // Define the server URL for the upload request
+                String url = CacheManager.ServerURL + "UploadImageString";
 
-            // Define the server URL for the upload request
-            String url = CacheManager.ServerURL + "UploadImageString";
+                // Trust all certificates (use with caution)
+                TrustAllCertificates.trustAllHosts();
 
-            // Trust all certificates (use with caution)
-            TrustAllCertificates.trustAllHosts();
+                // Create a POST request using Volley
+                JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, obj,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    if (response != null) {
+                                        String statusCode = response.getString("StatusCode");
 
-            // Create a POST request using Volley
-            JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, obj,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                if (response != null) {
-                                    String statusCode = response.getString("StatusCode");
-
-                                    // Check if the upload was successful based on server response
-                                    if (statusCode.equals("null")) {
-                                        // Move the uploaded file to the ProcessedImageDir
-                                        File newDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "ProcessedImageDir");
-                                        if (!newDir.exists()) {
-                                            newDir.mkdirs();
-                                        }
-
-                                        // Create a new file in the ProcessedImageDir
-                                        File newFile = new File(newDir, imageName);
-
-                                        // Copy the file to the new directory and delete the original file
-                                        FileInputStream fileInputStream = null;
-                                        FileOutputStream fileOutputStream = null;
-                                        try {
-                                            fileInputStream = new FileInputStream(file);
-                                            fileOutputStream = new FileOutputStream(newFile);
-
-                                            byte[] buffer = new byte[1024];
-                                            int bytesRead;
-                                            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                                                fileOutputStream.write(buffer, 0, bytesRead);
+                                        // Check if the upload was successful based on server response
+                                        if (statusCode.equals("null")) {
+                                            // Move the uploaded file to the ProcessedImageDir
+                                            File newDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "ProcessedImageDir");
+                                            if (!newDir.exists()) {
+                                                newDir.mkdirs();
                                             }
 
-                                            // Close streams after file operations
-                                            fileInputStream.close();
-                                            fileOutputStream.flush();
-                                            fileOutputStream.close();
+                                            // Create a new file in the ProcessedImageDir
+                                            File newFile = new File(newDir, imageName);
 
-                                            // Delete the original file after processing
-                                            file.delete();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                                            // Copy the file to the new directory and delete the original file
+                                            FileInputStream fileInputStream = null;
+                                            FileOutputStream fileOutputStream = null;
+                                            try {
+                                                fileInputStream = new FileInputStream(file);
+                                                fileOutputStream = new FileOutputStream(newFile);
+
+                                                byte[] buffer = new byte[1024];
+                                                int bytesRead;
+                                                while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                                                    fileOutputStream.write(buffer, 0, bytesRead);
+                                                }
+
+                                                // Close streams after file operations
+                                                fileInputStream.close();
+                                                fileOutputStream.flush();
+                                                fileOutputStream.close();
+
+                                                // Delete the original file after processing
+                                                file.delete();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                     }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // Handle error response
-                            error.printStackTrace();
-                        }
-                    });
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // Handle error response
+                                error.printStackTrace();
+                            }
+                        });
 
             // Set the retry policy for the request
             postRequest.setRetryPolicy(new DefaultRetryPolicy(

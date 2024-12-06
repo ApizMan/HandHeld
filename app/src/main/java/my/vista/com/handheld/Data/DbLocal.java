@@ -127,13 +127,13 @@ public class DbLocal
 		return list;
 	}
 
-	public static List<String>GetListForOffenceLocationSpinner(Context context)
+	public static List<String>GetListForOffenceLocationSpinner(Context context, String strlocation)
 	{
 		List<String> list = new ArrayList<String>();
 		DbUtils obj = new DbUtils(context);
 		obj.Open();
 
-		String sqlCommand = "SELECT DISTINCT OL.DESCRIPTION FROM OFFENCE_LOCATION OL, OFFENCE_AREA OA WHERE OA.ID = OL.AREA_ID" + " ORDER BY OL.DESCRIPTION";
+		String sqlCommand = "SELECT OL.DESCRIPTION FROM OFFENCE_LOCATION OL, OFFENCE_AREA OA WHERE OA.ID = OL.AREA_ID AND OA.DESCRIPTION = '" + strlocation + "' ORDER BY OL.DESCRIPTION";
 
 		Cursor cur = obj.Query(sqlCommand, null);
 
@@ -540,7 +540,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO OFFENCE_AREA (ID, DESCRIPTION) VALUES " +
-							"(" + info.getString("Code") + ", '" + info.getString("Description") + "')";
+							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -574,8 +574,8 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFENCE_LOCATION (ID, AREA_ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("Code") + "', " + info.getString("OffenceLocationAreaCode") + ", '" +
+					String sqlCommand = "INSERT INTO OFFENCE_LOCATION (CODE, AREA_ID, DESCRIPTION) VALUES " +
+							"('" + info.getString("Code") + "', '" + info.getString("OffenceLocationAreaCode") + "', '" +
 							info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
@@ -824,7 +824,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO VEHICLE_MAKE (ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("Code") + "', '" + info.getString("Description") + "')";
+							"(" + info.getString("Code") + ", '" + info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {
@@ -858,8 +858,8 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO VEHICLE_MODEL (ID, MAKE_ID, DESCRIPTION) VALUES " +
-							"('" + info.getString("Code") + "', '" + info.getString("VehicleMakeCode") + "', '" +
+					String sqlCommand = "INSERT INTO VEHICLE_MODEL (CODE, MAKE_ID, DESCRIPTION) VALUES " +
+							"(" + info.getString("Code") + ", " + info.getString("VehicleMakeCode") + ", '" +
 							info.getString("Description") + "')";
 					cur = obj.Query(sqlCommand, null);
 

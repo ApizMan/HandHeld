@@ -136,7 +136,7 @@ public class SearchActivity extends AppCompatActivity {
 			CacheManager.NoticeInfo.IsClamping = info.getBoolean("IsClamping");
 
 			try {
-				SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
+				SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssaa");
 				CacheManager.NoticeInfo.OffenceDateTime = format.parse(CacheManager.NoticeInfo.OffenceDateString);
 			} catch (Exception e) {
 				e.printStackTrace();

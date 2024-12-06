@@ -496,7 +496,7 @@ public class LoginActivity extends Activity {
 		if(ProcessLogin())
 		{
 			CacheManager.IsClearData = true;
-			ClearFileData();
+//			ClearFileData();
 			CacheManager.SummonIssuanceInfo = new SummonIssuanceInfo();
 			CacheManager.UserId = txtUserName.getText().toString();
 			CacheManager.saveOfficerId(CacheManager.UserId); // Save to persistent storage
