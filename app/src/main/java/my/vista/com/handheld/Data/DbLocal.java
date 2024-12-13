@@ -258,7 +258,7 @@ public class DbLocal
 							"orm.MAX_AMOUNT, os.Description AS OffenceDescription " +
 							"FROM OFFENCE_RATE_MASTER orm " +
 							"JOIN OFFENCE_SECTIONS os ON orm.SECTION_CODE = os.CODE " +
-							"WHERE orm.SECTION_CODE = ? AND os.DESCRIPTION = ?";
+							"WHERE os.CODE = ? AND orm.ACT_CODE = ?";
 
 			String[] selectionArgs = new String[] { offenceSectionCode, offenceActCode };
 			cur = obj.Query(sqlCommand, selectionArgs);
@@ -499,7 +499,7 @@ public class DbLocal
 					String sqlCommand = "INSERT INTO OFFENCE_RATE_MASTER (ACT_CODE, SECTION_CODE, SECTION_NO, " +
 							"ZONE1, ZONE2, ZONE3, ZONE4, AMOUNT1, AMOUNT2, AMOUNT3, AMOUNT4, SMALL_AMOUNT1, SMALL_AMOUNT2, " +
 							"SMALL_AMOUNT3, SMALL_AMOUNT4, DESC1, DESC2, DESC3, DESC4, MAX_AMOUNT, RESULT_CODE) VALUES " +
-							"(" + actCode + ", '" + sectionCode + "', '" + sNo + "', " +
+							"('" + actCode + "', '" + sectionCode + "', '" + sNo + "', " +
 							zone1 + ", " + zone2 + ", " + zone3 + ", " + zone4 + ", " +
 							amount1 + ", " + amount2 + ", " + amount3 + ", " + amount4 + ", " + smallAmount1 + ", " + smallAmount2 + ", " +
 							smallAmount3 + ", " + smallAmount4 + ", '" + amountDesc1 + "', '" + amountDesc2 + "', '" + amountDesc3 + "', '" +
@@ -609,7 +609,7 @@ public class DbLocal
 					JSONObject info = list.getJSONObject(i);
 
 					String sqlCommand = "INSERT INTO OFFENCE_SECTIONS (CODE, DESCRIPTION, NO_CODE, SUBSECTION_NO, OFFENCE_ACT_CODE) VALUES " +
-							"(" + info.getString("Code") + ", '" + info.getString("Description") + "', '" +
+							"('" + info.getString("Code") + "', '" + info.getString("Description") + "', '" +
 							info.getString("No") + "', '" + info.optString("SubsectionNo", "") + "', " +
 							info.getString("OffenceActCode") + ")";
 

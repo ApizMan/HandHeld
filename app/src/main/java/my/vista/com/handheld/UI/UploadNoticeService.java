@@ -33,6 +33,7 @@ import my.vista.com.handheld.Business.TrustAllCertificates;
 import my.vista.com.handheld.Data.DbLocal;
 import my.vista.com.handheld.Entity.SummonIssuanceInfo;
 import my.vista.com.handheld.Business.VolleySingleton;
+import my.vista.com.handheld.UI.Activity.RingkasanFragment;
 
 /**
  * Created by hp on 18/8/2016.
@@ -96,7 +97,7 @@ public class UploadNoticeService extends Service {
                             params.put("ImageName5", CacheManager.finalImage);
                             params.put("IsClamping", info.IsClamping);
                             params.put("Notes", info.Notes);
-                            params.put("SquarePoleNo", "SQP001");
+                            params.put("SquarePoleNo", "");
 //                            params.put("Latitude", info.Latitude);
 //                            params.put("Longitude", info.Longitude);
 
@@ -150,6 +151,8 @@ public class UploadNoticeService extends Service {
 
                             VolleySingleton.getInstance(CacheManager.mContext).addToRequestQueue(postRequest);
                         }
+
+                        RingkasanFragment.m_ProgressDialog.dismiss();
 
 //                        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
 //                        if (!dir.exists()) {

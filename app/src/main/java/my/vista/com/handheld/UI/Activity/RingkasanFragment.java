@@ -62,6 +62,8 @@ public class RingkasanFragment extends Fragment {
     private ProgressDialog mProgressDialog = null;
     View rootView;
 
+    public static ProgressDialog m_ProgressDialog = null;
+
     private static final int TAKE_PICTURE_FINAL = 1;
 
     private Runnable doSaveImage;
@@ -314,6 +316,13 @@ public class RingkasanFragment extends Fragment {
 
                 storeCaptureImage4(CacheManager.ImageUri);
                 DbLocal.InsertNotice(CacheManager.mContext, CacheManager.SummonIssuanceInfo);
+
+                m_ProgressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dialog);
+                m_ProgressDialog.setMessage("Saving Gambar Selepas..");
+                m_ProgressDialog.setTitle("");
+                m_ProgressDialog.setCancelable(false);
+                m_ProgressDialog.setIndeterminate(true);
+                m_ProgressDialog.show();
             }
         }
     }
