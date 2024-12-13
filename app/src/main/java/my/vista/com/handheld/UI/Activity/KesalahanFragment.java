@@ -92,7 +92,7 @@ public class KesalahanFragment extends Fragment {
                     {
                         BaseEntity entity = listSection.get(pos - 1);
                         List<String> list = DbLocal.GetListForOffenceSectionCodeSpinnerNew(CacheManager.mContext, entity.Code, spinnerOffenceAct.getSelectedItem().toString());
-                        etKesalahan.setText(list.get(1));
+                        etKesalahan.setText(list.get(2));
                     }
                     catch (Exception e) {
                         etKesalahan.setText("");
@@ -205,7 +205,7 @@ public class KesalahanFragment extends Fragment {
                 CacheManager.SummonIssuanceInfo.OffenceActCode  = list.get(0);
                 CacheManager.SummonIssuanceInfo.OffenceSectionCode  = list.get(1);
                 CacheManager.SummonIssuanceInfo.OffenceSection = list.get(2);
-                CacheManager.SummonIssuanceInfo.ResultCode = list.get(4);
+                CacheManager.SummonIssuanceInfo.ResultCode = list.get(3);
             }
             catch (Exception e) {
                 CacheManager.SummonIssuanceInfo.OffenceSection = "";

@@ -242,8 +242,8 @@ public class ImageActivity extends AppCompatActivity {
 	private boolean CheckMaximumPicture()
 	{
 		try {
-			if (CacheManager.SummonIssuanceInfo.ImageLocation.size() >= 4) {
-				CustomAlertDialog.Show(this, "GAMBAR", "Hanya 4 gambar dibenarkan. Sila padam yang tidak berkenan.", 0);
+			if (CacheManager.SummonIssuanceInfo.ImageLocation.size() >= 2) {
+				CustomAlertDialog.Show(this, "GAMBAR", "Hanya 2 gambar dibenarkan. Sila padam yang tidak berkenan.", 0);
 				return false;
 			}
 		}

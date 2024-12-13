@@ -289,8 +289,10 @@ public class RingkasanFragment extends Fragment {
             if (path != null && path.contains("/")) {
                 String image5path = path.substring(path.lastIndexOf("/") + 1); // Extract the file name
 
+                CacheManager.SummonIssuanceInfo.ImageLocation.add(image5path);
+                CacheManager.imageIndex++;
                 // Safely set the value at index 4
-                CacheManager.finalImage = image5path;
+//                CacheManager.finalImage = image5path;
 
                 if(!image5path.isEmpty()){
                     UploadNoticeService.mRun.run();
@@ -309,26 +311,9 @@ public class RingkasanFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (CacheManager.publicRequestCode == TAKE_PICTURE_FINAL) {
             if (CacheManager.publicResultCode == Activity.RESULT_OK) {
-                doSaveImage = new Runnable() {
-                    @Override
-                    public void run() {
-                        Looper.prepare();
 
-                        String delegate = "yy";
-                        String year = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
-
-                        CacheManager.SummonIssuanceInfo.ImageLocation.add(SettingsHelper.HandheldCode + year + SettingsHelper.getNoticeSerialNumber(CacheManager.mContext) + "Pic" + CacheManager.imageIndex + ".jpg");
-                        CacheManager.imageIndex++;
-//                        ImageActivity imageActivity = new ImageActivity();
-//                        imageActivity.DoSaveImage(CacheManager.ImageUri);
-                        Looper.loop();
-                        Looper.myLooper().quit();
-                    }
-                };
                 storeCaptureImage4(CacheManager.ImageUri);
-
-                Thread thread = new Thread(null, doSaveImage, "LoginProcess");
-                thread.start();
+                DbLocal.InsertNotice(CacheManager.mContext, CacheManager.SummonIssuanceInfo);
             }
         }
     }
@@ -659,8 +644,9 @@ public class RingkasanFragment extends Fragment {
                 if (summons.ImageLocation.size() >= 4) {
                     image4 = summons.ImageLocation.get(3);
                 }
-                if (summons.ImageLocation.size() >= 5) {
-                    image5 = summons.ImageLocation.get(4);
+                if (!CacheManager.finalImage.isEmpty())
+                {
+                    image5 = CacheManager.finalImage;
                 }
             } catch (Exception e) {
 
@@ -845,8 +831,6 @@ public class RingkasanFragment extends Fragment {
                             CacheManager.SummonIssuanceInfo.Longitude = coordinate.getLongitude();
                         }
 
-                        DbLocal.InsertNotice(CacheManager.mContext, CacheManager.SummonIssuanceInfo);
-
                         SettingsHelper.IncrementSerialNumber(CacheManager.mContext);
 
                         try {
@@ -861,7 +845,15 @@ public class RingkasanFragment extends Fragment {
 //                            e.printStackTrace();
 //                        }
 
-                        AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
+                        final Handler timeHandler = new Handler();
+                        Runnable run = new Runnable() {
+                            @Override
+                            public void run() {
+                                AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
+                            }
+                        };
+                        timeHandler.postDelayed(run, 8000);
+
                     } else {
                         AlertMessage(getActivity(),"ERROR", "FAILED TO CONNECT", 1);
                     }

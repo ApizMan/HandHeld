@@ -416,7 +416,7 @@ public final class PrinterUtils
             doc.DrawText(50, 30, 25, info.OffenceAct);
 
             doc.DrawText(0, 60, 20, "SEKSYEN / KAEDAH / PERINTAH :");
-            doc.DrawText(50, 30, 25, "PERINTAH " + info.OffenceSection);
+            doc.DrawText(50, 30, 25, "PERINTAH " + info.ResultCode);
 
             doc.DrawText(0, 60, 20, "KESALAHAN :");
             doc.DrawTextFlow(50, 30, 25, 700, "J", info.Offence);
@@ -440,7 +440,7 @@ public final class PrinterUtils
             doc.DrawText(230, 0, 23, ": " + info.NoticeSerialNo);
 
             doc.DrawText(420, 0, 23, "SEKSYEN KESALAHAN");
-            doc.DrawText(680, 0, 23, ": " + info.OffenceSection);
+            doc.DrawText(680, 0, 23, ": " + info.ResultCode);
 
             doc.DrawText(0, 30, 23, "TARIKH");
             doc.DrawText(230, 0, 23, ": " + CacheManager.GetDateString(info.OffenceDateTime));
