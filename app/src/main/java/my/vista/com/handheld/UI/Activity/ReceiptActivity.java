@@ -174,7 +174,7 @@ public class ReceiptActivity extends AppCompatActivity {
 			}
 
 			try {
-				SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssaa");
+				SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
 				CacheManager.NoticeInfo.OffenceDateTime = format.parse(CacheManager.NoticeInfo.OffenceDateString);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -185,7 +185,7 @@ public class ReceiptActivity extends AppCompatActivity {
 				if(paymentDateString.isEmpty() || paymentDateString.equalsIgnoreCase("null") || paymentDateString.equalsIgnoreCase("00010101000000")) {
 					paymentDateString = info.getString("ClampingPaymentDateString");
 				}
-				SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssaa");
+				SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
 				paymentDate = format.parse(paymentDateString);
 			} catch (Exception e) {
 				e.printStackTrace();

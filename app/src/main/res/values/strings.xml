@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="transfer">Transfer Notis</string>
-    <string name="version">Version 1.2</string>
+    <string name="version">Version 2.0 powered by CCP</string>
     <string name="app_name">Handheld</string>
     <string name="city_hall_name">Majlis Bandaraya Kuantan</string>
     <string name="menu_logout">Logout</string>

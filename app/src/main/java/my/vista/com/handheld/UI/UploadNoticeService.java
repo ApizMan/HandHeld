@@ -52,7 +52,9 @@ public class UploadNoticeService extends Service {
                         for(SummonIssuanceInfo info : list) {
                             final SummonIssuanceInfo model = info;
 
-                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssaa");
+                            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
+
+                            SimpleDateFormat formatExpired = new SimpleDateFormat("yyyyMMdd");
                             try {
                                 info.OffenceDateTime = format.parse(info.OffenceDateString);
                             } catch (Exception e) {
@@ -60,7 +62,7 @@ public class UploadNoticeService extends Service {
                             }
 
                             // Parse the offence date
-                            Date offenceDate = format.parse(info.OffenceDateString);
+                            Date offenceDate = formatExpired.parse(info.OffenceDateString);
 
                             // Add 30 days
                             Calendar calendar = Calendar.getInstance();
@@ -68,7 +70,7 @@ public class UploadNoticeService extends Service {
                             calendar.add(Calendar.DAY_OF_YEAR, 30);
 
                             // Format the expiry date back to the required string format
-                            String compoundExpiryDateString = format.format(calendar.getTime());
+                            String compoundExpiryDateString = format.format(calendar.getTime()).toUpperCase().replace(".", "");
 
                             final int id = info.NoticeId;
                             Map<String, Object> params = new HashMap<>();

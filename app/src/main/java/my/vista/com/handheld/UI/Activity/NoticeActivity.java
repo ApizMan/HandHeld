@@ -68,7 +68,7 @@ public class NoticeActivity extends AppCompatActivity {
 				findViewById(R.id.chkCompound).setEnabled(false);
 			}
 
-			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssaa");
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmaa");
 			String date = "";
 			try {
 				CacheManager.NoticeInfo.OffenceDateTime = format.parse(CacheManager.NoticeInfo.OffenceDateString);

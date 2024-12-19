@@ -315,7 +315,8 @@ public class LoginActivity extends Activity {
 				mProgressDialog.dismiss();
 			}
 		} else {
-			onPreStageSuccess();
+//			onPreStageSuccess();
+			onSameDownloadSuccess();
 		}
 	}
 
@@ -422,6 +423,22 @@ public class LoginActivity extends Activity {
 
 	public void onDownloadSuccess() {
 		Toast.makeText(this, "Muat Turun Berjaya", Toast.LENGTH_LONG).show();
+
+		if (mProgressDialog != null)
+			mProgressDialog.dismiss();
+
+		runOnUiThread(new Runnable() {
+			public void run() {
+				finish();
+				overridePendingTransition(0, 0);
+				startActivity(getIntent());
+				overridePendingTransition(0, 0);
+			}
+		});
+	}
+
+	public void onSameDownloadSuccess() {
+		Toast.makeText(this, "Data Sudah Tersedia", Toast.LENGTH_LONG).show();
 
 		if (mProgressDialog != null)
 			mProgressDialog.dismiss();
