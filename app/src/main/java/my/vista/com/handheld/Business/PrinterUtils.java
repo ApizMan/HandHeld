@@ -18,6 +18,8 @@ import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 
 import my.vista.com.handheld.Entity.NoticeInfo;
@@ -471,7 +473,46 @@ public final class PrinterUtils
                 }
             }
 
-            doc.DrawTextFlow(0, 60, 28, 800, "J",
+            doc.DrawTextFlow(0, 70, 28, 800, "C"," ");
+
+            doc.DrawQRCode(170, 0,7, "htt" + CacheManager.QRLink);
+//            Printer.printImage(info.QRLink, 0, 0, 500, 500, false);
+
+//            try {
+//                // Fetch the image from the URL
+//                URL url = new URL(info.QRLink);
+//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                connection.setDoInput(true);
+//                connection.connect();
+//                stBmp = connection.getInputStream();
+//
+//                bmp = BitmapFactory.decodeStream(stBmp);
+//
+//                if (Printer != null) {
+//                    Printer.storeImage("qr_image.png", new ZebraImageAndroid(bmp), bmp.getWidth(), bmp.getHeight());
+//                } else {
+//                    System.out.println("Printer not initialized!");
+//                }
+//            } catch (IOException e1) {
+//                // TODO Auto-generated catch block
+//                e1.printStackTrace();
+//            } finally {
+//                // Close the input stream
+//                if (stBmp != null) {
+//                    try {
+//                        stBmp.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            // Print the image
+//            Printer.printImage("qr_image.png", 0, 0, bmp.getWidth(), bmp.getHeight(), false);
+
+            doc.DrawTextFlow(0, 400, 30, 800, "C"," ");
+
+            doc.DrawTextFlow(0, 50, 28, 800, "J",
                     "Tempoh bayaran kompaun dikira dari tarikh kesalahan dilakukan " +
                             "termasuk hari ahad dan hari kelepasan Am ");
 

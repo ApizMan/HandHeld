@@ -32,21 +32,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlSerializer;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import my.vista.com.handheld.Business.CacheManager;
 import my.vista.com.handheld.Business.PrinterUtils;
 import my.vista.com.handheld.Business.PrintingDocument;
+import my.vista.com.handheld.Business.TrustAllCertificates;
+import my.vista.com.handheld.Business.VolleySingleton;
 import my.vista.com.handheld.Data.DbLocal;
 import my.vista.com.handheld.Entity.SummonIssuanceInfo;
 import my.vista.com.handheld.Data.SettingsHelper;
@@ -70,6 +86,8 @@ public class RingkasanFragment extends Fragment {
 
     boolean hasEmptyIndex = false;
     boolean isUriPresent = false;
+
+    int retry = 0;
 
     public RingkasanFragment() {
     }
@@ -354,7 +372,84 @@ public class RingkasanFragment extends Fragment {
                             @Override
                             public void run() {
                                 Looper.prepare();
-                                DoPrint();
+
+                                String url = CacheManager.qrPegeypay;
+
+                                Map<String, Object> params = new HashMap<>();
+                                params.put("order_output", "online");
+                                params.put("order_no", CacheManager.SummonIssuanceInfo.NoticeSerialNo);
+                                params.put("override_existing_unprocessed_order_no", "Yes");
+                                params.put("order_amount", String.format("%.2f", CacheManager.SummonIssuanceInfo.CompoundAmount1));
+                                params.put("qr_validity", 43200);
+                                params.put("store_id", "Kompund");
+                                params.put("terminal_id", "Phone");
+                                params.put("shift_id", "SHIFT 1");
+                                params.put("language", "en_us");
+
+                                TrustAllCertificates.trustAllHosts();
+
+                                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
+                                        new Response.Listener<JSONObject>() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                try {
+                                                    if (response != null) {
+                                                        String status = response.getString("status");
+                                                        if ("success".equals(status)) {
+                                                            JSONObject content = response.getJSONObject("content");
+//                                    CacheManager.SummonIssuanceInfo.QRLink = content.getString("iframe_url");
+                                                            CacheManager.saveQR(content.getString("iframe_url"));
+                                                        } else {
+                                                            Toast.makeText(getActivity(), "Failed to generate QR", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(getActivity(), "Generate QR Failed", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        },
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                if (retry < 3) {
+                                                    try {
+                                                        Thread.sleep(1000);
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    retry++;
+                                                } else {
+                                                    error.printStackTrace();
+                                                    mProgressDialog.dismiss();
+                                                }
+                                            }
+                                        }) {
+                                    @Override
+                                    public Map<String, String> getHeaders() {
+                                        Map<String, String> headers = new HashMap<String, String>();
+//                                headers.put("Accept", "application/json"); // Set the content type
+                                        headers.put("Authorization", "Bearer " + CacheManager.token); // Add the Bearer token
+                                        return headers;
+                                    }
+                                };
+
+                                request.setRetryPolicy(new DefaultRetryPolicy(
+                                        0,
+                                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+                                VolleySingleton.getInstance(CacheManager.mContext).addToRequestQueue(request);
+
+                                final Handler timeHandler = new Handler();
+                                Runnable run = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DoPrint();
+                                    }
+                                };
+                                timeHandler.postDelayed(run, 7000);
                                 Looper.loop();
                                 Looper.myLooper().quit();
                             }
@@ -784,41 +879,6 @@ public class RingkasanFragment extends Fragment {
         }
     }
 
-    public Location getLocationWithCheckNetworkAndGPS(Context mContext) {
-        LocationManager lm = (LocationManager)
-                mContext.getSystemService(Context.LOCATION_SERVICE);
-        assert lm != null;
-        boolean isGpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean isNetworkLocationEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        Location networkLocation = null, gpsLocation = null;
-
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return null;
-        }
-
-        if (isGpsEnabled)
-            gpsLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (isNetworkLocationEnabled)
-            networkLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-        if (gpsLocation != null && networkLocation != null) {
-            //smaller the number more accurate result will
-            if (gpsLocation.getAccuracy() > networkLocation.getAccuracy())
-                return networkLocation;
-            else
-                return gpsLocation;
-        } else {
-            if (gpsLocation != null) {
-                return gpsLocation;
-            } else if (networkLocation != null) {
-                return networkLocation;
-            }
-        }
-
-        return null;
-    }
-
     private void DoPrint()
     {
         try
@@ -830,39 +890,26 @@ public class RingkasanFragment extends Fragment {
                     PrinterUtils.OpenConnection();
 
                     if(PrinterUtils.Connection.isConnected()) {
-                        doc = PrinterUtils.CreateNotice(CacheManager.SummonIssuanceInfo);
-                        PrinterUtils.Print(doc);
 
-                        Location coordinate = getLocationWithCheckNetworkAndGPS(CacheManager.mContext);
+                                doc = PrinterUtils.CreateNotice(CacheManager.SummonIssuanceInfo);
+                                PrinterUtils.Print(doc);
 
-                        if(coordinate != null) {
-                            CacheManager.SummonIssuanceInfo.Latitude = coordinate.getLatitude();
-                            CacheManager.SummonIssuanceInfo.Longitude = coordinate.getLongitude();
-                        }
+                                SettingsHelper.IncrementSerialNumber(CacheManager.mContext);
 
-                        SettingsHelper.IncrementSerialNumber(CacheManager.mContext);
+                                try {
+                                    GenerateXmlNotice(CacheManager.SummonIssuanceInfo);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
 
-                        try {
-                            GenerateXmlNotice(CacheManager.SummonIssuanceInfo);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-//                        try {
-//                            MovePictures();
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-
-                        final Handler timeHandler = new Handler();
-                        Runnable run = new Runnable() {
-                            @Override
-                            public void run() {
-                                AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
-                            }
-                        };
-                        timeHandler.postDelayed(run, 8000);
-
+                                final Handler timeHandler = new Handler();
+                                Runnable run = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
+                                    }
+                                };
+                                timeHandler.postDelayed(run, 8000);
                     } else {
                         AlertMessage(getActivity(),"ERROR", "FAILED TO CONNECT", 1);
                     }

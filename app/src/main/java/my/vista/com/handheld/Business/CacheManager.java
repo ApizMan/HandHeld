@@ -34,10 +34,9 @@ import my.vista.com.handheld.Data.SettingsHelper;
 public final class CacheManager 
 {
 //	public static String ServerURL = "http://43.252.37.175/ParkingWebService/HandheldService.svc/";
-	public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MBK/HandheldService.svc/JSONService/";
-	public static String ServerKNURL = "http://myenforce.citycarpark.my/HandheldApi_MBK/HandheldService.svc/JSONService/";
-
-	public static String ServerKuantanURL = "https://mycouncil.citycarpark.my/parking/ctcp/services-listerner_mbk.php?prpid=&action=GetParkingRightByPlateVerify&filterid=";
+public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MBK/HandheldService.svc/JSONService/";
+	public static String refreshPegeypay = "http://220.158.208.216:3000/payment/public/refresh-token";
+	public static String qrPegeypay = "https://pegepay.com/api/npd-wa/order-create/custom-validity";
 	/** The User id. */
 	public static String UserId = "";
 	public static int noticeSerialNumber;
@@ -130,13 +129,44 @@ public final class CacheManager
 
 	public static String deviceId = null;
 
+	public static String token = "";
+	public static String QRLink = "";
+
 	public static void initialize(Context context) {
 		mContext = context;
+		loadToken();
 		loadDeviceId();
 		loadOfficerId();
 		loadImage5();
+		loadQR();
 		loadRequestCode();
 		loadResultCode();
+	}
+
+	public static void saveToken(String tokenId) {
+		token = tokenId;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("tokenId", tokenId);
+		editor.apply();
+	}
+
+	private static void loadToken() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		token = sharedPreferences.getString("tokenId", null);
+	}
+
+	public static void saveQR(String qrId) {
+		QRLink = qrId;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("qrId", qrId);
+		editor.apply();
+	}
+
+	private static void loadQR() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		QRLink = sharedPreferences.getString("qrId", null);
 	}
 
 	public static void saveOfficerId(String officer) {

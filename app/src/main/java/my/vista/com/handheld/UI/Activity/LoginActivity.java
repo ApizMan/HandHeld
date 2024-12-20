@@ -571,6 +571,51 @@ public class LoginActivity extends Activity {
 			CustomAlertDialog.Show(LoginActivity.this, "LOGIN", "Sila Pilih Unit", 3);
 			return false;
 		}
+
+		String url = CacheManager.refreshPegeypay ;
+		TrustAllCertificates.trustAllHosts();
+
+		JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(),
+				new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						try {
+							if (response != null) {
+								String accessToken = response.getString("access_token");
+								CacheManager.saveToken(accessToken);
+							} else {
+								Toast.makeText(LoginActivity.this, "Access Token Failed", Toast.LENGTH_SHORT).show();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						mProgressDialog.dismiss();
+					}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						if (retry < 3) {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							retry++;
+						} else {
+							error.printStackTrace();
+							mProgressDialog.dismiss();
+						}
+					}
+				}) {
+		};
+
+		request.setRetryPolicy(new DefaultRetryPolicy(
+				0,
+				DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+		VolleySingleton.getInstance(this).addToRequestQueue(request);
 		
 		return true;
 	}

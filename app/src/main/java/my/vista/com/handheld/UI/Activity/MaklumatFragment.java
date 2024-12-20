@@ -1,10 +1,16 @@
 package my.vista.com.handheld.UI.Activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,11 +26,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -198,26 +206,62 @@ public class MaklumatFragment extends Fragment {
         return rootView;
     }
 
+    public Location getLocationWithCheckNetworkAndGPS(Context mContext) {
+        LocationManager lm = (LocationManager)
+                mContext.getSystemService(Context.LOCATION_SERVICE);
+        assert lm != null;
+        boolean isGpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean isNetworkLocationEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Location networkLocation = null, gpsLocation = null;
+
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+
+        if (isGpsEnabled)
+            gpsLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (isNetworkLocationEnabled)
+            networkLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        if (gpsLocation != null && networkLocation != null) {
+            //smaller the number more accurate result will
+            if (gpsLocation.getAccuracy() > networkLocation.getAccuracy())
+                return networkLocation;
+            else
+                return gpsLocation;
+        } else {
+            if (gpsLocation != null) {
+                return gpsLocation;
+            } else if (networkLocation != null) {
+                return networkLocation;
+            }
+        }
+
+        return null;
+    }
+
     private void CheckVehicleNo(final String vehicleNo, SummonIssuanceInfo info) {
-        String url = CacheManager.ServerKuantanURL + vehicleNo;
+        Location coordinate = getLocationWithCheckNetworkAndGPS(CacheManager.mContext);
+
+        if(coordinate != null) {
+            CacheManager.SummonIssuanceInfo.Latitude = coordinate.getLatitude();
+            CacheManager.SummonIssuanceInfo.Longitude = coordinate.getLongitude();
+        }
+
+        String url = CacheManager.ServerURL + "HasActiveMonthlyPassOrValidation/" + vehicleNo + "/" + CacheManager.HandheldId + "/" + CacheManager.officerId + "/71/" + info.Latitude + "/" + info.Longitude ;
         TrustAllCertificates.trustAllHosts();
 
-        JsonArrayRequest arrayRequest = new JsonArrayRequest(Request.Method.GET, url,
-                new Response.Listener<JSONArray>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(),
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         try {
-                            if (response.length() == 0) {
-                                String status = vehicleNo +  "- Tiada Bayaran";
-                                String statusCode = "null"; // Or extract meaningful data
-                                onCheckingSuccess(status, statusCode);
+                            if (response != null) {
+                                String status = response.getString("StatusDescription");
+                                onCheckingSuccess(status);
                             } else {
-                                JSONObject firstRecord = response.getJSONObject(0);
-                                String endDate = firstRecord.getString("enddate");
-                                String endTime = firstRecord.getString("endtime");
-                                String status = vehicleNo + "- Berbayar (" + endDate + " " + endTime + ")";
-                                String statusCode = "BAYAR"; // Or any meaningful status code
-                                onCheckingSuccess(status, statusCode);
+                                onCheckingFailed();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -229,7 +273,7 @@ public class MaklumatFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(retry < 3) {
+                        if (retry < 3) {
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
@@ -237,43 +281,52 @@ public class MaklumatFragment extends Fragment {
                             }
                             retry++;
                             CheckVehicleNo(vehicleNo, CacheManager.SummonIssuanceInfo);
-                        }
-                        else {
+                        } else {
                             error.printStackTrace();
                             mProgressDialog.dismiss();
                             onCheckingFailed();
                         }
                     }
-                });
+                }) {
+        };
 
-        arrayRequest.setRetryPolicy(new DefaultRetryPolicy(
+        request.setRetryPolicy(new DefaultRetryPolicy(
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        VolleySingleton.getInstance(this.getActivity()).addToRequestQueue(arrayRequest);
+        VolleySingleton.getInstance(this.getActivity()).addToRequestQueue(request);
     }
 
-    private void onCheckingSuccess(final String message, final String code) {
+    private void onCheckingSuccess(final String message) {
         try {
             this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                (getView().findViewById(R.id.tvTrafikMessage)).setVisibility(View.VISIBLE);
-                ((TextView)getView().findViewById(R.id.tvTrafikMessage)).setTextColor(Color.parseColor("#EF4444"));
+                    TextView trafikMessageTextView = getView().findViewById(R.id.tvTrafikMessage);
 
-                if(code.equalsIgnoreCase("BAYAR")) {
-                    ((TextView)getView().findViewById(R.id.tvTrafikMessage)).setTextColor(Color.parseColor("#44EF44"));
-                }
+                    // Ensure the TextView is visible
+                    trafikMessageTextView.setVisibility(View.VISIBLE);
 
-                ((TextView)getView().findViewById(R.id.tvTrafikMessage)).setText(message);
-                CacheManager.HasChecked = true;
+                    // Check if the message contains "(Pass Khas)"
+                    if (message.contains("(Pass Khas)")) {
+                        // Set text color to green
+                        trafikMessageTextView.setTextColor(Color.parseColor("#44EF44"));
+                    } else {
+                        // Set text color to red
+                        trafikMessageTextView.setTextColor(Color.parseColor("#EF4444"));
+                    }
+
+                    // Set the message text
+                    trafikMessageTextView.setText(message);
+                    CacheManager.HasChecked = true;
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void onCheckingFailed() {
         Toast.makeText(this.getActivity(), "Semakan Gagal", Toast.LENGTH_LONG).show();
