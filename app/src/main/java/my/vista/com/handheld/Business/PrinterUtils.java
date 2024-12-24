@@ -315,10 +315,10 @@ public final class PrinterUtils
     }
 
     public static PrintingDocument CreateNotice(SummonIssuanceInfo info) {
-        PrintingDocument doc = new PrintingDocument("2650");
+        PrintingDocument doc = new PrintingDocument("2850");
         //PrintingDocument doc = new PrintingDocument("2000");
         if(info.IsClamping.equalsIgnoreCase("True")) {
-            doc = new PrintingDocument("2700");
+            doc = new PrintingDocument("2900");
         }
 
         try {
@@ -371,7 +371,7 @@ public final class PrinterUtils
             doc.DrawText(10, 50, 30, "Kepada Pemandu / Pemilik Kenderaan :");
 
             doc.DrawText(10, 35, 20, "NO KENDERAAN");
-            doc.DrawText(230, 0, 25, ": " + info.VehicleNo);
+            doc.DrawText(230, 0, 28, ": " + info.VehicleNo);
             doc.DrawText(10, 30, 20, "JENIS KENDERAAN");
             doc.DrawText(230, 0, 25, ": " + info.VehicleType);
 
@@ -407,7 +407,7 @@ public final class PrinterUtils
             doc.DrawText(230, 0, 25, ": " + location);
 
             doc.DrawText(10, 30, 20, "NO PETAK");
-            doc.DrawText(230, 0, 25, ": " + "");
+            doc.DrawText(230, 0, 25, ": " + info.PetakVehicle);
 
             doc.DrawTextFlow(0, 60, 30, 800, "J",
                     "SILA AMBIL PERHATIAN BAHAWA TUNA/PUAN SEPERTIMANA " +
@@ -423,7 +423,10 @@ public final class PrinterUtils
             doc.DrawText(0, 60, 20, "KESALAHAN :");
             doc.DrawTextFlow(50, 30, 25, 700, "J", info.Offence);
 
-            doc.DrawText(0, 150, 20, "DIKELUARKAN OLEH");
+            doc.DrawText(0, 130, 20, "NOTIS :");
+            doc.DrawTextFlow(50, 30, 25, 700 , "J", info.Notes);
+
+            doc.DrawText(0, 130, 20, "DIKELUARKAN OLEH");
             doc.DrawText(230, 0, 25, ": " + CacheManager.officerId);
 
             doc.DrawText(0, 30, 20, "KOD SAKSI");
@@ -451,7 +454,7 @@ public final class PrinterUtils
             doc.DrawText(680, 0, 23, ": " + "H76255");
 
             doc.DrawText(0, 30, 23, "NO KENDERAAN");
-            doc.DrawText(230, 0, 23, ": " + info.VehicleNo);
+            doc.DrawText(230, 0, 28, ": " + info.VehicleNo);
 
             doc.DrawTextFlow(0, 60, 30, 800, "J",
                     "TAWARAN UNTUK MENGKOMPAUN KESALAHAN INI " +
@@ -465,50 +468,33 @@ public final class PrinterUtils
                 if (info.CompoundAmountDesc2 != null && info.CompoundAmountDesc2.length() != 0) {
                     doc.DrawTextFlow(400, 0, 30, 400, "C", info.CompoundAmountDesc2);
                 }
+
+                if (info.CompoundAmountDesc3 != null && info.CompoundAmountDesc3.length() != 0) {
+                    doc.DrawTextFlow(400, 0, 30, 400, "C", info.CompoundAmountDesc3);
+                }
+
+                if (info.CompoundAmountDesc4 != null && info.CompoundAmountDesc4.length() != 0) {
+                    doc.DrawTextFlow(400, 0, 30, 400, "C", info.CompoundAmountDesc4);
+                }
             }
             if (info.CompoundAmountDesc1 != null && info.CompoundAmountDesc1.length() != 0) {
                 doc.DrawTextFlow(0, 30, 40, 400, "C", "RM " + String.format("%.2f", info.CompoundAmount1));
                 if (info.CompoundAmountDesc2 != null && info.CompoundAmountDesc2.length() != 0) {
                     doc.DrawTextFlow(400, 0, 40, 400, "C", "RM " + String.format("%.2f", info.CompoundAmount2));
                 }
+
+                if (info.CompoundAmountDesc3 != null && info.CompoundAmountDesc3.length() != 0) {
+                    doc.DrawTextFlow(400, 0, 40, 400, "C", "RM " + String.format("%.2f", info.CompoundAmount3));
+                }
+
+                if (info.CompoundAmountDesc4 != null && info.CompoundAmountDesc4.length() != 0) {
+                    doc.DrawTextFlow(400, 0, 40, 400, "C", "RM " + String.format("%.2f", info.CompoundAmount4));
+                }
             }
 
             doc.DrawTextFlow(0, 70, 28, 800, "C"," ");
 
             doc.DrawQRCode(170, 0,7, "htt" + CacheManager.QRLink);
-//            Printer.printImage(info.QRLink, 0, 0, 500, 500, false);
-
-//            try {
-//                // Fetch the image from the URL
-//                URL url = new URL(info.QRLink);
-//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                connection.setDoInput(true);
-//                connection.connect();
-//                stBmp = connection.getInputStream();
-//
-//                bmp = BitmapFactory.decodeStream(stBmp);
-//
-//                if (Printer != null) {
-//                    Printer.storeImage("qr_image.png", new ZebraImageAndroid(bmp), bmp.getWidth(), bmp.getHeight());
-//                } else {
-//                    System.out.println("Printer not initialized!");
-//                }
-//            } catch (IOException e1) {
-//                // TODO Auto-generated catch block
-//                e1.printStackTrace();
-//            } finally {
-//                // Close the input stream
-//                if (stBmp != null) {
-//                    try {
-//                        stBmp.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//
-//            // Print the image
-//            Printer.printImage("qr_image.png", 0, 0, bmp.getWidth(), bmp.getHeight(), false);
 
             doc.DrawTextFlow(0, 400, 30, 800, "C"," ");
 

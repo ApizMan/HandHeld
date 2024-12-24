@@ -1111,7 +1111,7 @@ public class DbLocal
 			String sqlCommand = "INSERT INTO OFFENCE_NOTICE_MAINTENANCE (NOTICE_NO, VEHICLE_NO, OFFENCE_DATE, OFFICER_ID, " +
 				"HANDHELD_CODE, VEHICLE_TYPE, VEHICLE_MAKE_MODEL, VEHICLE_COLOR, ROAD_TAX_NO, OFFENCE_ACT_CODE, " +
                 "OFFENCE_SECTION_CODE, OFFENCE_LOCATION_AREA, OFFENCE_LOCATION, OFFENCE_LOCATION_DETAILS, COMPOUND_AMOUNT, " +
-                "IMAGE_NAME1, IMAGE_NAME2, IMAGE_NAME3, IMAGE_NAME4, IMAGE_NAME5, IS_CLAMPING, NOTES, OFFICER_UNIT, LATITUDE, LONGITUDE) VALUES " +
+                "IMAGE_NAME1, IMAGE_NAME2, IMAGE_NAME3, IMAGE_NAME4, IMAGE_NAME5, IS_CLAMPING, NOTES, OFFICER_UNIT, LATITUDE, LONGITUDE, VEHICLE_BOX_NO) VALUES " +
 				"('" + info.NoticeSerialNo + "', '" + info.VehicleNo + "', '" + offenceDateTime + "', " +
 				"'" + CacheManager.UserId + "', '" + SettingsHelper.HandheldCode + "', '" + info.VehicleType + "', " +
 				"'" + makeModel + "', '" + info.VehicleColor + "', '" + info.RoadTaxNo + "', '" +
@@ -1119,7 +1119,7 @@ public class DbLocal
                 location + "', '" + info.OffenceLocationDetails + "', " +
 				"'" + info.CompoundAmount1 + "', '" + image1 + "', " +
 				"'" + image2 + "', '" + image3 + "', '" + image4 + "', '" + image5 + "', '" +
-				info.IsClamping + "', '" + info.Notes + "', '" + CacheManager.officerUnit +  "', " + info.Latitude + ", " + info.Longitude + ")";
+				info.IsClamping + "', '" + info.Notes + "', '" + CacheManager.officerUnit +  "', " + info.Latitude + ", " + info.Longitude + ", '" + info.PetakVehicle + "')";
 			cur = obj.Query(sqlCommand, null);
 
 			if( (cur != null) && cur.moveToFirst() )
@@ -1277,6 +1277,7 @@ public class DbLocal
 				info.IsClamping = cur.getString(21);
 				info.Notes = cur.getString(22);
 				info.OfficerUnit = cur.getString(23);
+				info.PetakVehicle = cur.getString(27);
 
 				list.add(info);
 			} while (cur.moveToNext());
@@ -1356,6 +1357,7 @@ public class DbLocal
 				info.IsClamping = cur.getString(21);
 				info.Notes = cur.getString(22);
 				info.OfficerUnit = cur.getString(23);
+				info.PetakVehicle = cur.getString(27);
 
 				list.add(info);
 			} while (cur.moveToNext());

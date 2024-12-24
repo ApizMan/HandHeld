@@ -545,7 +545,7 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 	}
 	public static String GetTimeString(Date date)
 	{
-		String delegate = "hh:mm aa";
+		String delegate = "hh:mm:ss aa";
 		if(date != null)
 			return  ((String) DateFormat.format(delegate,date)).toUpperCase().replace(".", "");
 		else

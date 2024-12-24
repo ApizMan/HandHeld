@@ -96,12 +96,10 @@ public class UploadNoticeService extends Service {
                             params.put("ImageName2", info.ImageLocation2);
                             params.put("ImageName3", info.ImageLocation3);
                             params.put("ImageName4", info.ImageLocation4);
-                            params.put("ImageName5", CacheManager.finalImage);
+                            params.put("ImageName5", info.ImageLocation5);
                             params.put("IsClamping", info.IsClamping);
                             params.put("Notes", info.Notes);
-                            params.put("SquarePoleNo", "");
-//                            params.put("Latitude", info.Latitude);
-//                            params.put("Longitude", info.Longitude);
+                            params.put("SquarePoleNo", info.PetakVehicle);
 
                             String url = CacheManager.ServerURL + "UploadNotice";
                             TrustAllCertificates.trustAllHosts();

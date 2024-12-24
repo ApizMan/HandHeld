@@ -31,6 +31,7 @@ public class SummonIssuanceInfo
 	public String VehicleColor = "";
 	public int VehicleColorPos = 0;
 	public String VehicleNo="";
+	public String PetakVehicle="";
 	public String OffenceAct="";
 	public int OffenceActPos=0;
 	public String OffenceActCode="";

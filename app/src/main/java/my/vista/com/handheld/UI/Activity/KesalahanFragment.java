@@ -251,6 +251,9 @@ public class KesalahanFragment extends Fragment {
         EditText tButirLokasi = (EditText)getView().findViewById(R.id.etButiranLokasi);
         CacheManager.SummonIssuanceInfo.OffenceLocationDetails = tButirLokasi.getText().toString();
 
+        EditText tPetak = (EditText)getView().findViewById(R.id.etPetak);
+        CacheManager.SummonIssuanceInfo.PetakVehicle = tPetak.getText().toString();
+
         String delegate = "yy";
         String year = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
         SettingsHelper.CheckYear(CacheManager.mContext);

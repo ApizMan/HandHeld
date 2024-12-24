@@ -748,9 +748,9 @@ public class RingkasanFragment extends Fragment {
                 if (summons.ImageLocation.size() >= 4) {
                     image4 = summons.ImageLocation.get(3);
                 }
-                if (!CacheManager.finalImage.isEmpty())
+                if (summons.ImageLocation.size() >= 5)
                 {
-                    image5 = CacheManager.finalImage;
+                    image5 = summons.ImageLocation.get(4);
                 }
             } catch (Exception e) {
 
