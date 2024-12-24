@@ -79,6 +79,14 @@ public class NoticeIssuanceActivity extends AppCompatActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_main, menu);
+//		// Get the menu item by its ID
+//		MenuItem kompaunAmItem = menu.findItem(R.id.kompaun_am);
+//		// Set the title based on the condition
+//		if (CacheManager.isKompaunAm) {
+//			kompaunAmItem.setTitle("Kompaun AM");
+//		} else {
+//			kompaunAmItem.setTitle("Kompaun Trafik");
+//		}
 		return true;
 	}
 
@@ -91,6 +99,15 @@ public class NoticeIssuanceActivity extends AppCompatActivity {
 			startActivity(i);
 			return true;
 		}
+
+//		if (id == R.id.kompaun_am) {
+//			// Toggle the state of isKompaunAm
+//			boolean newState = CacheManager.isKompaunAm;
+//			CacheManager.kompaunAmIsTrue(!newState);
+//			Intent i = new Intent(this, NoticeIssuanceActivity.class);
+//			startActivity(i);
+//			return true;
+//		}
 
 		if (id == R.id.menu_payment) {
 			Intent i = new Intent(this, SearchActivity.class);

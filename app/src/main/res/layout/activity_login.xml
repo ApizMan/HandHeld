@@ -40,20 +40,41 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:text="ID Pegawai"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/etUserName"
-                android:hint="ID Pengguna"
-                android:background="@drawable/edit_text_with_frame"
-                android:maxLength="8"
-                android:inputType="number"
-                android:padding="10dp"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/etUserName"
+                    android:hint="ID Pengguna"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/edit_text_with_frame"
+                    android:maxLength="8"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black" />
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:hint="Password"
+                    android:background="@drawable/edit_text_with_frame"
+                    android:maxLength="8"
+                    android:inputType="numberPassword"
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black" />
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -62,32 +83,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:text="Kata Laluan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/etPassword"
-                android:hint="Password"
-                android:background="@drawable/edit_text_with_frame"
-                android:maxLength="8"
-                android:inputType="numberPassword"
-                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="Unit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:padding="5dp"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Unit"/>
             <Spinner
                 android:id="@+id/spinnerUnit"
+                android:background="@drawable/spinner_with_frame"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:spinnerMode="dialog"
+                android:popupBackground="@drawable/spinner_popup_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="Saksi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+            <Spinner
+                android:id="@+id/spinnerSaksi"
                 android:background="@drawable/spinner_with_frame"
                 android:padding="10dp"
                 android:textColor="@color/black"

@@ -647,9 +647,9 @@ public class DbLocal
 				try {
 					JSONObject info = list.getJSONObject(i);
 
-					String sqlCommand = "INSERT INTO OFFICER_MAINTENANCE (ID, NAME, PASSWORD) VALUES " +
-							"('" + info.getString("ID") + "', '" +
-							info.getString("Name") + "', '" + info.getString("Password") + "')";
+					String sqlCommand = "INSERT INTO OFFICER_MAINTENANCE (ID, USER_ID, NAME, PASSWORD, RANK, RANK_NO) VALUES " +
+							"('" + info.getString("ID") + "', '" + info.getString("Code") + "', '" +
+					info.getString("Name") + "', '" + info.getString("Password") + "', " + info.getString("Rank") + ", '" + info.getString("RankNo") + "')";
 					cur = obj.Query(sqlCommand, null);
 
 					if ((cur != null) && cur.moveToFirst()) {

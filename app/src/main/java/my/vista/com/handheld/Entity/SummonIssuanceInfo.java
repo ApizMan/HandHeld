@@ -22,6 +22,8 @@ public class SummonIssuanceInfo
 	public String RoadTaxNo = "-";
 	public String SelectedVehicleMake = "";
 	public String SelectedVehicleModel = "";
+	public String NamaSyarikat = "";
+	public String NoIC = "";
 	public String VehicleMake = "";
 	public int VehicleMakePos = 0;
 	public String VehicleModel = "";

@@ -47,6 +47,7 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 	public static String officerName = "";
 	public static String officerDetails = "";
 	public static String officerUnit = "";
+	public static String officerSaksi = "";
 	public static String finalImage = "";
 	public static int publicRequestCode = 0;
 	public static int publicResultCode = 0;
@@ -131,12 +132,15 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 
 	public static String token = "";
 	public static String QRLink = "";
+	public static boolean isKompaunAm = true;
 
 	public static void initialize(Context context) {
 		mContext = context;
 		loadToken();
 		loadDeviceId();
 		loadOfficerId();
+		loadSaksiId();
+		loadKompaunAm();
 		loadImage5();
 		loadQR();
 		loadRequestCode();
@@ -180,6 +184,19 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 	private static void loadOfficerId() {
 		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
 		officerId = sharedPreferences.getString("officerId", null);
+	}
+
+	public static void saveSaksiId(String saksiId) {
+		officerSaksi = saksiId;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("saksiId", saksiId);
+		editor.apply();
+	}
+
+	private static void loadSaksiId() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		officerSaksi = sharedPreferences.getString("saksiId", null);
 	}
 
 	public static void saveDeviceId(String device) {
@@ -232,6 +249,19 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 	private static void loadImage5() {
 		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
 		finalImage = sharedPreferences.getString("finalImage", null);
+	}
+
+	public static void kompaunAmIsTrue(boolean kompaunAm) {
+		isKompaunAm = kompaunAm;
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean("isKompaunAm", kompaunAm);
+		editor.apply();
+	}
+
+	private static void loadKompaunAm() {
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+		isKompaunAm = sharedPreferences.getBoolean("isKompaunAm", true);
 	}
 
     public static my.vista.com.handheld.Entity.SummonIssuanceInfo updateData(my.vista.com.handheld.Entity.SummonIssuanceInfo info) {

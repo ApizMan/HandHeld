@@ -423,14 +423,14 @@ public final class PrinterUtils
             doc.DrawText(0, 60, 20, "KESALAHAN :");
             doc.DrawTextFlow(50, 30, 25, 700, "J", info.Offence);
 
-            doc.DrawText(0, 130, 20, "NOTIS :");
+            doc.DrawText(0, 130, 20, "NOTA :");
             doc.DrawTextFlow(50, 30, 25, 700 , "J", info.Notes);
 
             doc.DrawText(0, 130, 20, "DIKELUARKAN OLEH");
             doc.DrawText(230, 0, 25, ": " + CacheManager.officerId);
 
             doc.DrawText(0, 30, 20, "KOD SAKSI");
-            doc.DrawText(230, 0, 25, ": " + "TIADA");
+            doc.DrawText(230, 0, 25, ": " + CacheManager.officerSaksi);
 
 
             doc.DrawTextFlow(0, 130, 25, 400, "C",

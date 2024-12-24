@@ -147,6 +147,7 @@ public class MaklumatFragment extends Fragment {
         spinnerTrafikWarna.setAdapter(dataAdapter);
 
         EditText txtCtrlId = (EditText) rootView.findViewById(R.id.etTrafikNoKenderaan);
+
         txtCtrlId.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -184,6 +185,15 @@ public class MaklumatFragment extends Fragment {
         });
 
         final EditText etVehicleNo = (EditText) rootView.findViewById(R.id.etTrafikNoKenderaan);
+        TextView trafikMessageTextView = rootView.findViewById(R.id.tvTrafikMessage);
+        TextView etTrafikNoCukaiJalan = rootView.findViewById(R.id.etTrafikNoCukaiJalan);
+        TextView etNamaSyarikat = rootView.findViewById(R.id.etNamaSyarikat);
+        TextView etIC = rootView.findViewById(R.id.etIC);
+        TextView titleModel = rootView.findViewById(R.id.titleModel);
+        TextView titleJenama = rootView.findViewById(R.id.titleJenama);
+        TextView titleWarna = rootView.findViewById(R.id.titleWarna);
+        TextView titleJenisBadan = rootView.findViewById(R.id.titleJenisBadan);
+
         Button btnCheck = (Button) rootView.findViewById(R.id.btn_check);
         btnCheck.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,6 +212,24 @@ public class MaklumatFragment extends Fragment {
                 }
             }
         });
+
+        if (CacheManager.isKompaunAm){
+            etNamaSyarikat.setVisibility(View.GONE);
+            etIC.setVisibility(View.GONE);
+        } else {
+            etVehicleNo.setVisibility(View.GONE);
+            btnCheck.setVisibility(View.GONE);
+            trafikMessageTextView.setVisibility(View.GONE);
+            etTrafikNoCukaiJalan.setVisibility(View.GONE);
+            spinnerTrafikJenisBadan.setVisibility(View.GONE);
+            spinnerTrafikJenama.setVisibility(View.GONE);
+            spinnerTrafikModel.setVisibility(View.GONE);
+            spinnerTrafikWarna.setVisibility(View.GONE);
+            titleWarna.setVisibility(View.GONE);
+            titleModel.setVisibility(View.GONE);
+            titleJenama.setVisibility(View.GONE);
+            titleJenisBadan.setVisibility(View.GONE);
+        }
 
         return rootView;
     }
@@ -362,6 +390,9 @@ public class MaklumatFragment extends Fragment {
         CacheManager.SummonIssuanceInfo.RoadTaxNo = ((EditText)getView().findViewById(R.id.etTrafikNoCukaiJalan)).getText().toString();
         CacheManager.SummonIssuanceInfo.SelectedVehicleMake = ((EditText)getView().findViewById(R.id.etTrafikVehicleMake)).getText().toString();
         CacheManager.SummonIssuanceInfo.SelectedVehicleModel = ((EditText)getView().findViewById(R.id.etTrafikVehicleModel)).getText().toString();
+
+        CacheManager.SummonIssuanceInfo.NamaSyarikat = ((EditText)getView().findViewById(R.id.etNamaSyarikat)).getText().toString();
+        CacheManager.SummonIssuanceInfo.NoIC = ((EditText)getView().findViewById(R.id.etIC)).getText().toString();
 
         Spinner sJenama = (Spinner)getView().findViewById(R.id.spinnerTrafikJenama);
         CacheManager.SummonIssuanceInfo.VehicleMakePos = sJenama.getSelectedItemPosition();

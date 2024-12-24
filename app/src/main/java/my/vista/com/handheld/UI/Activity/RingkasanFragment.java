@@ -578,13 +578,33 @@ public class RingkasanFragment extends Fragment {
     {
         if (CacheManager.SummonIssuanceInfo.VehicleNo.length() == 0)
         {
-            CustomAlertDialog.Show(getActivity(), "NO. KEND.", "Sila Isikan No. Kend.", 3);
-            return false;
+            if (CacheManager.isKompaunAm) {
+                CustomAlertDialog.Show(getActivity(), "NO. KEND.", "Sila Isikan No. Kend.", 3);
+                return false;
+            }
         }
+        if (CacheManager.SummonIssuanceInfo.NamaSyarikat.length() == 0)
+        {
+            if (!CacheManager.isKompaunAm) {
+                CustomAlertDialog.Show(getActivity(), "NAMA/SYARIKAT", "Sila Isikan Nama/Syarikat", 3);
+                return false;
+            }
+        }
+
+        if (CacheManager.SummonIssuanceInfo.NoIC.length() == 0)
+        {
+            if (!CacheManager.isKompaunAm) {
+                CustomAlertDialog.Show(getActivity(), "NO IC/ROC", "Sila Isikan No IC/ROC", 3);
+                return false;
+            }
+        }
+
         if (CacheManager.SummonIssuanceInfo.VehicleType.length() == 0)
         {
-            CustomAlertDialog.Show(getActivity(), "JENIS BADAN", "Sila Pilih Jenis Badan Kenderaan", 3);
-            return false;
+            if (CacheManager.isKompaunAm) {
+                CustomAlertDialog.Show(getActivity(), "JENIS BADAN", "Sila Pilih Jenis Badan Kenderaan", 3);
+                return false;
+            }
         }
         if (CacheManager.SummonIssuanceInfo.OffenceAct.length() == 0)
         {

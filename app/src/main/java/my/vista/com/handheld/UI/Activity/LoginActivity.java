@@ -63,6 +63,7 @@ public class LoginActivity extends Activity {
 	private Button btnLogin;
 	private Button btnDownload;
 	private Spinner spinnerUnit;
+	private Spinner spinnerSaksi;
 
 	private Runnable doLogin;
 	int retry = 0;
@@ -147,6 +148,14 @@ public class LoginActivity extends Activity {
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             dataAdapter.insert("--Sila Pilih--", 0);
             spinnerUnit.setAdapter(dataAdapter);
+
+			spinnerSaksi = (Spinner) findViewById(R.id.spinnerSaksi);
+			List<String> listSaksi = new ArrayList<String>();
+			list = DbLocal.GetOneFieldListForSpinner(CacheManager.mContext, "ID", "OFFICER_MAINTENANCE");
+			ArrayAdapter<String> dataSaksiAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
+			dataSaksiAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			dataSaksiAdapter.insert("--Sila Pilih--", 0);
+			spinnerSaksi.setAdapter(dataSaksiAdapter);
 
 			btnLogin.setEnabled(true);
         }
@@ -518,6 +527,7 @@ public class LoginActivity extends Activity {
 			CacheManager.UserId = txtUserName.getText().toString();
 			CacheManager.saveOfficerId(CacheManager.UserId); // Save to persistent storage
 			CacheManager.officerUnit = spinnerUnit.getSelectedItem().toString();
+			CacheManager.saveSaksiId(spinnerSaksi.getSelectedItem().toString());
 			Intent i = new Intent(this, NoticeIssuanceActivity.class);
 			startActivity(i);
 			finish();
@@ -569,6 +579,12 @@ public class LoginActivity extends Activity {
 		if(spinnerUnit.getSelectedItemPosition() <= 0)
 		{
 			CustomAlertDialog.Show(LoginActivity.this, "LOGIN", "Sila Pilih Unit", 3);
+			return false;
+		}
+
+		if(spinnerSaksi.getSelectedItemPosition() <= 0)
+		{
+			CustomAlertDialog.Show(LoginActivity.this, "LOGIN", "Sila Pilih Saksi", 3);
 			return false;
 		}
 

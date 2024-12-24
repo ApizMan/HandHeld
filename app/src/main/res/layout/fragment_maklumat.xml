@@ -81,12 +81,43 @@
                         android:maxLength="20" />
                 </android.support.design.widget.TextInputLayout>
 
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/etNamaSyarikat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/nama_syarikat"
+                        android:padding="10dp"
+                        android:layout_margin="10dp"
+                        android:inputType="textCapCharacters"
+                        android:textColor="@color/black"
+                        android:maxLength="20" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/etIC"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/no_ic_roc"
+                        android:padding="10dp"
+                        android:layout_margin="10dp"
+                        android:inputType="number"
+                        android:textColor="@color/black"
+                        android:maxLength="20" />
+                </android.support.design.widget.TextInputLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/titleJenama"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
@@ -128,6 +159,7 @@
                     android:layout_margin="10dp"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/titleModel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
@@ -169,6 +201,7 @@
                     android:layout_margin="10dp"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/titleJenisBadan"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
@@ -193,6 +226,7 @@
                     android:layout_margin="10dp"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/titleWarna"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="5dp"

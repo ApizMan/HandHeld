@@ -80,7 +80,7 @@ public class UploadNoticeService extends Service {
                             params.put("CompoundExpiryDateString", compoundExpiryDateString);
                             params.put("OfficerID", info.OfficerId);
                             params.put("OfficerUnit", info.OfficerUnit);
-                            params.put("OfficerSaksi", "TIADA");
+                            params.put("OfficerSaksi", CacheManager.officerSaksi);
                             params.put("HandheldCode", info.HandheldCode);
                             params.put("VehicleType", info.VehicleType);
                             params.put("VehicleMakeModel", info.VehicleMakeModel);

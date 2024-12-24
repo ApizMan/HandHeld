@@ -5,6 +5,8 @@
     <string name="app_name">Handheld</string>
     <string name="city_hall_name">Majlis Bandaraya Kuantan</string>
     <string name="menu_logout">Logout</string>
+    <string name="kompaun_am">Kompaun AM</string>
+    <string name="kompaun_trafik">Kompaun Trafik</string>
     <string name="menu_reprint">Salinan Pendua</string>
     <string name="menu_payment">Bayar</string>
     <string name="menu_receipt">Salinan Resit</string>
@@ -31,4 +33,6 @@
     <string name="title_activity_receipt">Form Salinan Resit</string>
 	<string name="title_activity_transfer">Form Transfer</string>
     <string name="title_activity_prestage">Form PreStage</string>
+    <string name="no_ic_roc">No IC/ROC</string>
+    <string name="nama_syarikat">Nama/Syarikat</string>
 </resources>
