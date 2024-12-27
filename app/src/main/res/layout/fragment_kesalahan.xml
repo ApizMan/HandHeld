@@ -231,7 +231,6 @@
                     android:gravity="top"
                     android:hint="Nota"
                     android:inputType="textCapCharacters"
-                    android:maxLength="30"
                     android:padding="10dp"
                     android:textColor="@color/black" />
             </android.support.design.widget.TextInputLayout>
