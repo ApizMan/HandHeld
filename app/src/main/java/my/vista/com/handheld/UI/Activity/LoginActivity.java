@@ -588,16 +588,16 @@ public class LoginActivity extends Activity {
 			return false;
 		}
 
-		String url = CacheManager.refreshPegeypay ;
+		String url = CacheManager.getTokenPegeypay ;
 		TrustAllCertificates.trustAllHosts();
 
-		JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(),
+		JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(),
 				new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
 						try {
 							if (response != null) {
-								String accessToken = response.getString("access_token");
+								String accessToken = response.getString("accessToken");
 								CacheManager.saveToken(accessToken);
 							} else {
 								Toast.makeText(LoginActivity.this, "Access Token Failed", Toast.LENGTH_SHORT).show();

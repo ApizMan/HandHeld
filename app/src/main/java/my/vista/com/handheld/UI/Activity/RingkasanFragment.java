@@ -372,84 +372,7 @@ public class RingkasanFragment extends Fragment {
                             @Override
                             public void run() {
                                 Looper.prepare();
-
-                                String url = CacheManager.qrPegeypay;
-
-                                Map<String, Object> params = new HashMap<>();
-                                params.put("order_output", "online");
-                                params.put("order_no", CacheManager.SummonIssuanceInfo.NoticeSerialNo);
-                                params.put("override_existing_unprocessed_order_no", "Yes");
-                                params.put("order_amount", String.format("%.2f", CacheManager.SummonIssuanceInfo.CompoundAmount1));
-                                params.put("qr_validity", 43200);
-                                params.put("store_id", "Kompund");
-                                params.put("terminal_id", "Phone");
-                                params.put("shift_id", "SHIFT 1");
-                                params.put("language", "en_us");
-
-                                TrustAllCertificates.trustAllHosts();
-
-                                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
-                                        new Response.Listener<JSONObject>() {
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                try {
-                                                    if (response != null) {
-                                                        String status = response.getString("status");
-                                                        if ("success".equals(status)) {
-                                                            JSONObject content = response.getJSONObject("content");
-//                                    CacheManager.SummonIssuanceInfo.QRLink = content.getString("iframe_url");
-                                                            CacheManager.saveQR(content.getString("iframe_url"));
-                                                        } else {
-                                                            Toast.makeText(getActivity(), "Failed to generate QR", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    } else {
-                                                        Toast.makeText(getActivity(), "Generate QR Failed", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        },
-                                        new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                if (retry < 3) {
-                                                    try {
-                                                        Thread.sleep(1000);
-                                                    } catch (InterruptedException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    retry++;
-                                                } else {
-                                                    error.printStackTrace();
-                                                    mProgressDialog.dismiss();
-                                                }
-                                            }
-                                        }) {
-                                    @Override
-                                    public Map<String, String> getHeaders() {
-                                        Map<String, String> headers = new HashMap<String, String>();
-//                                headers.put("Accept", "application/json"); // Set the content type
-                                        headers.put("Authorization", "Bearer " + CacheManager.token); // Add the Bearer token
-                                        return headers;
-                                    }
-                                };
-
-                                request.setRetryPolicy(new DefaultRetryPolicy(
-                                        0,
-                                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-                                VolleySingleton.getInstance(CacheManager.mContext).addToRequestQueue(request);
-
-                                final Handler timeHandler = new Handler();
-                                Runnable run = new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DoPrint();
-                                    }
-                                };
-                                timeHandler.postDelayed(run, 7000);
+                                getQRPegeypay();
                                 Looper.loop();
                                 Looper.myLooper().quit();
                             }
@@ -493,6 +416,128 @@ public class RingkasanFragment extends Fragment {
         FillData();
 
         return rootView;
+    }
+
+    private void getQRPegeypay() {
+        String url = CacheManager.qrPegeypay;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("order_output", "online");
+        params.put("order_no", CacheManager.SummonIssuanceInfo.NoticeSerialNo);
+        params.put("override_existing_unprocessed_order_no", "Yes");
+        params.put("order_amount", String.format("%.2f", CacheManager.SummonIssuanceInfo.CompoundAmount1));
+        params.put("qr_validity", 43200);
+        params.put("store_id", "Kompund");
+        params.put("terminal_id", "Phone");
+        params.put("shift_id", "SHIFT 1");
+        params.put("language", "en_us");
+
+        TrustAllCertificates.trustAllHosts();
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response != null) {
+                                String status = response.getString("status");
+                                if ("success".equals(status)) {
+                                    JSONObject content = response.getJSONObject("content");
+//                                    CacheManager.SummonIssuanceInfo.QRLink = content.getString("iframe_url");
+                                    CacheManager.saveQR(content.getString("iframe_url"));
+                                    DoPrint();
+                                } else {
+                                    Toast.makeText(getActivity(), "Failed to generate QR", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), "Generate QR Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (retry < 3) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            retry++;
+                            refreshToken();
+                        } else {
+                            error.printStackTrace();
+                            mProgressDialog.dismiss();
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<String, String>();
+//                                headers.put("Accept", "application/json"); // Set the content type
+                headers.put("Authorization", "Bearer " + CacheManager.token); // Add the Bearer token
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        VolleySingleton.getInstance(CacheManager.mContext).addToRequestQueue(request);
+    }
+
+    private void refreshToken() {
+        String url = CacheManager.refreshPegeypay;
+
+        TrustAllCertificates.trustAllHosts();
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response != null) {
+                                String accessToken = response.getString("access_token");
+                                CacheManager.saveToken(accessToken);
+                                getQRPegeypay();
+                            } else {
+                                Toast.makeText(getActivity(), "Access Token Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        mProgressDialog.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (retry < 3) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            retry++;
+                        } else {
+                            error.printStackTrace();
+                            mProgressDialog.dismiss();
+                        }
+                    }
+                }) {
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
 
     public void AlertMessage(final Context context, String title,String message,int type)

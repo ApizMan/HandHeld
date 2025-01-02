@@ -35,8 +35,9 @@ public final class CacheManager
 {
 //	public static String ServerURL = "http://43.252.37.175/ParkingWebService/HandheldService.svc/";
 public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MBK/HandheldService.svc/JSONService/";
-	public static String refreshPegeypay = "http://220.158.208.216:3000/payment/public/refresh-token";
+	public static String getTokenPegeypay = "http://220.158.208.216:3000/payment/public/token";
 	public static String qrPegeypay = "https://pegepay.com/api/npd-wa/order-create/custom-validity";
+	public static String refreshPegeypay = "http://220.158.208.216:3000/payment/public/refresh-token";
 	/** The User id. */
 	public static String UserId = "";
 	public static int noticeSerialNumber;
