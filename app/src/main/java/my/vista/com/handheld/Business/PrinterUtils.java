@@ -397,11 +397,19 @@ public final class PrinterUtils
             doc.DrawText(10, 30, 20, "ZON");
             doc.DrawText(230, 0, 25, ": " + info.OffenceLocationArea);
 
+            if (info.OffenceLocation.length() != 0) {
+                doc.DrawText(10, 30, 20, "JALAN");
+                doc.DrawText(230, 0, 25, ": " + info.OffenceLocation);
+            } else {
+                doc.DrawText(10, 30, 20, "JALAN");
+                doc.DrawText(230, 0, 25, ": " + info.SummonLocation);
+            }
+
             String location = "";
-            if(info.OffenceLocation.length() > 0)
-                location = info.OffenceLocation;
+            if(info.OffenceLocationDetails.length() > 0)
+                location = info.OffenceLocationDetails;
             else
-                location = info.SummonLocation;
+                location = "";
 
             doc.DrawText(10, 30, 20, "LOKASI");
             doc.DrawText(230, 0, 25, ": " + location);

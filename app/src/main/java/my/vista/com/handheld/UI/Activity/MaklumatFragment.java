@@ -337,12 +337,12 @@ public class MaklumatFragment extends Fragment {
                     trafikMessageTextView.setVisibility(View.VISIBLE);
 
                     // Check if the message contains "(Pass Khas)"
-                    if (message.contains("(Pass Khas)")) {
-                        // Set text color to green
-                        trafikMessageTextView.setTextColor(Color.parseColor("#44EF44"));
-                    } else {
+                    if (message.contains("Tiada Bayaran")) {
                         // Set text color to red
                         trafikMessageTextView.setTextColor(Color.parseColor("#EF4444"));
+                    } else {
+                        // Set text color to green
+                        trafikMessageTextView.setTextColor(Color.parseColor("#44EF44"));
                     }
 
                     // Set the message text

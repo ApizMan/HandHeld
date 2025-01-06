@@ -117,6 +117,31 @@
                     android:layout_margin="10dp"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/titleJenisBadan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Jenis Badan (*)"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerTrafikJenisBadan"
+                        android:layout_width="match_parent"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                        android:spinnerMode="dialog"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+                    <TextView
                         android:id="@+id/titleJenama"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -194,31 +219,6 @@
                         android:textColor="@color/black"
                         android:maxLength="20"/>
                 </android.support.design.widget.TextInputLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/titleJenisBadan"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:textSize="12dp"
-                        android:textColor="@color/black"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Jenis Badan (*)"/>
-
-                    <Spinner
-                        android:id="@+id/spinnerTrafikJenisBadan"
-                        android:layout_width="match_parent"
-                        android:padding="10dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
-                        android:spinnerMode="dialog"/>
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

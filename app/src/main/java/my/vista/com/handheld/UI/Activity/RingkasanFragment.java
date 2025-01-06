@@ -644,13 +644,13 @@ public class RingkasanFragment extends Fragment {
             }
         }
 
-        if (CacheManager.SummonIssuanceInfo.VehicleMake.length() == 0)
-        {
+        if ((CacheManager.SummonIssuanceInfo.VehicleMake.length() == 0 && CacheManager.SummonIssuanceInfo.SelectedVehicleMake.length() == 0) ||
+                (CacheManager.SummonIssuanceInfo.VehicleMake.length() != 0 && CacheManager.SummonIssuanceInfo.SelectedVehicleMake.length() != 0)) {
             CustomAlertDialog.Show(getActivity(), "JENAMA", "Sila Pilih Jenama Kenderaan", 3);
             return false;
         }
 
-        if (CacheManager.SummonIssuanceInfo.VehicleModel.length() == 0)
+        if ((CacheManager.SummonIssuanceInfo.VehicleModel.length() == 0 && CacheManager.SummonIssuanceInfo.SelectedVehicleModel.length() == 0) || (CacheManager.SummonIssuanceInfo.VehicleModel.length() != 0 && CacheManager.SummonIssuanceInfo.SelectedVehicleModel.length() != 0))
         {
             CustomAlertDialog.Show(getActivity(), "MODEL", "Sila Pilih Model Kenderaan", 3);
             return false;
@@ -693,7 +693,7 @@ public class RingkasanFragment extends Fragment {
             return false;
         }
 
-        if (CacheManager.SummonIssuanceInfo.OffenceLocation.length() == 0)
+        if ((CacheManager.SummonIssuanceInfo.OffenceLocation.length() == 0 && CacheManager.SummonIssuanceInfo.SummonLocation.length() == 0) || (CacheManager.SummonIssuanceInfo.OffenceLocation.length() != 0 && CacheManager.SummonIssuanceInfo.SummonLocation.length() != 0))
         {
             CustomAlertDialog.Show(getActivity(), "NAMA JALAN", "Sila Pilih Nama Jalan", 3);
             return false;
