@@ -342,7 +342,7 @@ public class MaklumatFragment extends Fragment {
                         trafikMessageTextView.setTextColor(Color.parseColor("#EF4444"));
                     } else {
                         // Set text color to green
-                        trafikMessageTextView.setTextColor(Color.parseColor("#44EF44"));
+                        trafikMessageTextView.setTextColor(Color.parseColor("#1f2af0"));
                     }
 
                     // Set the message text
