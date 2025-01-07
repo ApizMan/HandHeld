@@ -418,7 +418,7 @@ public final class PrinterUtils
             doc.DrawText(230, 0, 25, ": " + info.PetakVehicle);
 
             doc.DrawTextFlow(0, 60, 30, 800, "J",
-                    "SILA AMBIL PERHATIAN BAHAWA TUNA/PUAN SEPERTIMANA " +
+                    "SILA AMBIL PERHATIAN BAHAWA TUAN/PUAN SEPERTIMANA " +
                             "TARIKH DAN WAKTU YANG DINYATAKAN TUAN/PUAN TELAH " +
                             "DIDAPATI MELAKUKAN KESALAHAN SEPERTI BERIKUT: ");
 
@@ -468,7 +468,7 @@ public final class PrinterUtils
                     "TAWARAN UNTUK MENGKOMPAUN KESALAHAN INI " +
                             "BERKUATKUASA DARI TARIKH NOTIS INI DIKELUARKAN. JIKA " +
                             "SEKIRANYA KOMPAUN INI TIDAK DIJELASKAN DALAM TEMPOH " +
-                            "TERSEBUT MAKA TINDIKAN UNDANG - UNDANG AKAN " +
+                            "TERSEBUT MAKA TINDAKAN UNDANG - UNDANG AKAN " +
                             "DITERUSKAN. ");
 
             if (info.CompoundAmountDesc1 != null && info.CompoundAmountDesc1.length() != 0) {
