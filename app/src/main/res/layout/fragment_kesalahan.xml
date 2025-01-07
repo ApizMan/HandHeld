@@ -145,7 +145,6 @@
                     android:layout_margin="10dp"
                     android:hint="Lokasi Kesalahan"
                     android:inputType="textCapCharacters"
-                    android:maxLength="20"
                     android:padding="10dp"
                     android:textColor="@color/black" />
             </android.support.design.widget.TextInputLayout>
@@ -161,7 +160,6 @@
                     android:gravity="top"
                     android:hint="Butiran Lokasi"
                     android:inputType="textCapCharacters"
-                    android:maxLength="30"
                     android:padding="10dp"
                     android:textColor="@color/black" />
             </android.support.design.widget.TextInputLayout>
@@ -177,7 +175,6 @@
                     android:gravity="top"
                     android:hint="No Petak"
                     android:inputType="textCapCharacters"
-                    android:maxLength="30"
                     android:padding="10dp"
                     android:textColor="@color/black" />
             </android.support.design.widget.TextInputLayout>
