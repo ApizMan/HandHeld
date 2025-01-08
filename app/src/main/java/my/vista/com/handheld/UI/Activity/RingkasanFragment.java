@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -585,12 +587,33 @@ public class RingkasanFragment extends Fragment {
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
-                    CacheManager.IsNewNotice = true;
-                    System.gc();
-                    Intent i = new Intent(getActivity(), NoticeIssuanceActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    getActivity().startActivity(i);
-                    getActivity().finish();
+                    // Check for internet connection
+                    if (isInternetAvailable()) {
+                        mProgressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dialog);
+                        mProgressDialog.setMessage("Please Wait, Check Your Internet for smooth loading.");
+                        mProgressDialog.setTitle("Loading..");
+                        mProgressDialog.setCancelable(false);
+                        mProgressDialog.setIndeterminate(true);
+                        mProgressDialog.show();
+
+                        final Handler timeHandler = new Handler();
+                        Runnable run = new Runnable() {
+                            @Override
+                            public void run() {
+                                CacheManager.IsNewNotice = true;
+                                System.gc();
+                                Intent i = new Intent(getActivity(), NoticeIssuanceActivity.class);
+                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                getActivity().startActivity(i);
+                                getActivity().finish();
+                            }
+                        };
+                        timeHandler.postDelayed(run, 3000);
+
+                    } else {
+                        // Show a message to the user if no internet connection is available
+                        Toast.makeText(getActivity(), "No internet connection. Please check your connection and try again.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
@@ -605,6 +628,16 @@ public class RingkasanFragment extends Fragment {
             });
         }
         builder.show();
+    }
+
+    // Method to check internet connectivity
+    private boolean isInternetAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.isConnected();
+        }
+        return false;
     }
 
     @Override

@@ -13,12 +13,25 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import my.vista.com.handheld.Business.CacheManager;
 import my.vista.com.handheld.Business.PrinterUtils;
 import my.vista.com.handheld.Business.PrintingDocument;
+import my.vista.com.handheld.Business.TrustAllCertificates;
+import my.vista.com.handheld.Business.VolleySingleton;
 import my.vista.com.handheld.Data.DbLocal;
 import my.vista.com.handheld.Data.SettingsHelper;
 import my.vista.com.handheld.Entity.SummonIssuanceInfo;
@@ -29,6 +42,8 @@ import my.vista.com.handheld.UI.CustomControl.HistoryAdapter;
 public class HistoryActivity extends AppCompatActivity {
 	private Runnable doPrint;
 	private ProgressDialog mProgressDialog = null;
+
+	int retry = 0;
 	SummonIssuanceInfo selected = new SummonIssuanceInfo();
 
 	@Override
@@ -85,7 +100,7 @@ public class HistoryActivity extends AppCompatActivity {
 					public void run()
 					{
 						Looper.prepare();
-						DoPrint(info);
+						getQRPegeypay(info);
 						Looper.loop();
 						Looper.myLooper().quit();
 					}
@@ -130,6 +145,128 @@ public class HistoryActivity extends AppCompatActivity {
 		}
 
 		return true;
+	}
+
+	private void getQRPegeypay(my.vista.com.handheld.Entity.SummonIssuanceInfo info) {
+		String url = CacheManager.qrPegeypay;
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("order_output", "online");
+		params.put("order_no", info.NoticeSerialNo);
+		params.put("override_existing_unprocessed_order_no", "Yes");
+		params.put("order_amount", String.format("%.2f", info.CompoundAmount1));
+		params.put("qr_validity", 43200);
+		params.put("store_id", "Kompund");
+		params.put("terminal_id", "Phone");
+		params.put("shift_id", "SHIFT 1");
+		params.put("language", "en_us");
+
+		TrustAllCertificates.trustAllHosts();
+
+		JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
+				new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						try {
+							if (response != null) {
+								String status = response.getString("status");
+								if ("success".equals(status)) {
+									JSONObject content = response.getJSONObject("content");
+//                                    CacheManager.SummonIssuanceInfo.QRLink = content.getString("iframe_url");
+									CacheManager.saveQR(content.getString("iframe_url"));
+									DoPrint(info);
+								} else {
+									Toast.makeText(HistoryActivity.this, "Failed to generate QR", Toast.LENGTH_SHORT).show();
+								}
+							} else {
+								Toast.makeText(HistoryActivity.this, "Generate QR Failed", Toast.LENGTH_SHORT).show();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						if (retry < 3) {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							retry++;
+							refreshToken(info);
+						} else {
+							error.printStackTrace();
+							mProgressDialog.dismiss();
+						}
+					}
+				}) {
+			@Override
+			public Map<String, String> getHeaders() {
+				Map<String, String> headers = new HashMap<String, String>();
+//                                headers.put("Accept", "application/json"); // Set the content type
+				headers.put("Authorization", "Bearer " + CacheManager.token); // Add the Bearer token
+				return headers;
+			}
+		};
+
+		request.setRetryPolicy(new DefaultRetryPolicy(
+				0,
+				DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+		VolleySingleton.getInstance(CacheManager.mContext).addToRequestQueue(request);
+	}
+
+	private void refreshToken(my.vista.com.handheld.Entity.SummonIssuanceInfo info) {
+		String url = CacheManager.refreshPegeypay;
+
+		TrustAllCertificates.trustAllHosts();
+
+		JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(),
+				new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						try {
+							if (response != null) {
+								String accessToken = response.getString("access_token");
+								CacheManager.saveToken(accessToken);
+								getQRPegeypay(info);
+							} else {
+								Toast.makeText(HistoryActivity.this, "Access Token Failed", Toast.LENGTH_SHORT).show();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						mProgressDialog.dismiss();
+					}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						if (retry < 3) {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							retry++;
+						} else {
+							error.printStackTrace();
+							mProgressDialog.dismiss();
+						}
+					}
+				}) {
+		};
+
+		request.setRetryPolicy(new DefaultRetryPolicy(
+				0,
+				DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+		VolleySingleton.getInstance(HistoryActivity.this).addToRequestQueue(request);
 	}
 
 	private void DoPrint(my.vista.com.handheld.Entity.SummonIssuanceInfo info)
