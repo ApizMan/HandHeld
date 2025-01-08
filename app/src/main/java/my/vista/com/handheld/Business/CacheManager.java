@@ -50,6 +50,8 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 	public static String officerUnit = "";
 	public static String officerSaksi = "";
 	public static String finalImage = "";
+	public  static  boolean hasGambarSelepas = false;
+	public static  String image5path = "";
 	public static int publicRequestCode = 0;
 	public static int publicResultCode = 0;
 

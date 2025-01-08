@@ -309,15 +309,19 @@ public class RingkasanFragment extends Fragment {
             // Extract the image file name from the URI
             String path = imageUri.getPath(); // Get the full path
             if (path != null && path.contains("/")) {
-                String image5path = path.substring(path.lastIndexOf("/") + 1); // Extract the file name
+                CacheManager.image5path = path.substring(path.lastIndexOf("/") + 1); // Extract the file name
 
-                CacheManager.SummonIssuanceInfo.ImageLocation.add(image5path);
+                CacheManager.SummonIssuanceInfo.ImageLocation.add(CacheManager.image5path);
                 CacheManager.imageIndex++;
                 // Safely set the value at index 4
 //                CacheManager.finalImage = image5path;
 
-                if(!image5path.isEmpty()){
+                if(CacheManager.hasGambarSelepas){
                     UploadNoticeService.mRun.run();
+                    SettingsHelper.IncrementSerialNumber(CacheManager.mContext);
+                    AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
+                } else {
+                    Toast.makeText(getActivity(), "Data Tidak Dapat Hantar ke MBK. Tiada Gambar Selepas.", Toast.LENGTH_LONG).show();
                 }
 
             } else {
@@ -331,20 +335,27 @@ public class RingkasanFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (CacheManager.publicRequestCode == TAKE_PICTURE_FINAL) {
-            if (CacheManager.publicResultCode == Activity.RESULT_OK) {
+        if (resultCode == -1){
+            CacheManager.hasGambarSelepas = true;
+            if (CacheManager.publicRequestCode == TAKE_PICTURE_FINAL) {
+                if (CacheManager.publicResultCode == Activity.RESULT_OK) {
 
-                storeCaptureImage4(CacheManager.ImageUri);
-                DbLocal.InsertNotice(CacheManager.mContext, CacheManager.SummonIssuanceInfo);
+                    storeCaptureImage4(CacheManager.ImageUri);
+                    DbLocal.InsertNotice(CacheManager.mContext, CacheManager.SummonIssuanceInfo);
 
-                m_ProgressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dialog);
-                m_ProgressDialog.setMessage("Saving Gambar Selepas..");
-                m_ProgressDialog.setTitle("");
-                m_ProgressDialog.setCancelable(false);
-                m_ProgressDialog.setIndeterminate(true);
-                m_ProgressDialog.show();
+                    m_ProgressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dialog);
+                    m_ProgressDialog.setMessage("Saving Gambar Selepas..");
+                    m_ProgressDialog.setTitle("");
+                    m_ProgressDialog.setCancelable(false);
+                    m_ProgressDialog.setIndeterminate(true);
+                    m_ProgressDialog.show();
+                }
             }
+        } else {
+            CacheManager.hasGambarSelepas = false;
+            AlertMessage(getActivity(), "WARNING!", "Sila Ambil Gambar Selepas.", 0);
         }
+
     }
 
     @Override
@@ -380,18 +391,9 @@ public class RingkasanFragment extends Fragment {
                             }
                         };
 
-                        final Handler timeHandler = new Handler();
-                        Runnable run = new Runnable() {
-                            @Override
-                            public void run() {
-                                captureImage4(getActivity(), CacheManager.SummonIssuanceInfo);
-                            }
-                        };
-                        timeHandler.postDelayed(run, 2000);
-
                         mProgressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dialog);
-                        mProgressDialog.setMessage("Loading");
-                        mProgressDialog.setTitle("");
+                        mProgressDialog.setMessage("Loading Printing Compound..");
+                        mProgressDialog.setTitle("Please Wait");
                         mProgressDialog.setCancelable(false);
                         mProgressDialog.setIndeterminate(true);
                         mProgressDialog.show();
@@ -513,7 +515,6 @@ public class RingkasanFragment extends Fragment {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        mProgressDialog.dismiss();
                     }
                 },
                 new Response.ErrorListener() {
@@ -1007,22 +1008,15 @@ public class RingkasanFragment extends Fragment {
                                 doc = PrinterUtils.CreateNotice(CacheManager.SummonIssuanceInfo);
                                 PrinterUtils.Print(doc);
 
-                                SettingsHelper.IncrementSerialNumber(CacheManager.mContext);
-
                                 try {
                                     GenerateXmlNotice(CacheManager.SummonIssuanceInfo);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
 
-                                final Handler timeHandler = new Handler();
-                                Runnable run = new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
-                                    }
-                                };
-                                timeHandler.postDelayed(run, 8000);
+                                mProgressDialog.dismiss();
+
+                                captureImage4(getActivity(), CacheManager.SummonIssuanceInfo);
                     } else {
                         AlertMessage(getActivity(),"ERROR", "FAILED TO CONNECT", 1);
                     }
