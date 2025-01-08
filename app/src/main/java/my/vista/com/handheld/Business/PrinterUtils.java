@@ -425,8 +425,13 @@ public final class PrinterUtils
             doc.DrawText(0, 120, 20, "PERUNTUKAN UNDANG-UNDANG :");
             doc.DrawText(50, 30, 25, info.OffenceAct);
 
-            doc.DrawText(0, 60, 20, "SEKSYEN / KAEDAH / PERINTAH :");
-            doc.DrawText(50, 30, 25, "PERINTAH " + info.ResultCode);
+            if (info.ResultCode.length() == 0) {
+                doc.DrawText(0, 60, 20, "SEKSYEN / KAEDAH / PERINTAH :");
+                doc.DrawText(50, 30, 25, "PERINTAH " + info.OffenceSection);
+            } else {
+                doc.DrawText(0, 60, 20, "SEKSYEN / KAEDAH / PERINTAH :");
+                doc.DrawText(50, 30, 25, "PERINTAH " + info.ResultCode);
+            }
 
             doc.DrawText(0, 60, 20, "KESALAHAN :");
             doc.DrawTextFlow(50, 30, 25, 700, "J", info.Offence);
@@ -452,8 +457,13 @@ public final class PrinterUtils
             doc.DrawText(0, 50, 23, "NO. KOMPAUN");
             doc.DrawText(230, 0, 23, ": " + info.NoticeSerialNo);
 
-            doc.DrawText(420, 0, 23, "SEKSYEN KESALAHAN");
-            doc.DrawText(680, 0, 23, ": " + info.ResultCode);
+            if (info.ResultCode.length() == 0) {
+                doc.DrawText(420, 0, 23, "SEKSYEN KESALAHAN");
+                doc.DrawText(680, 0, 23, ": " + info.OffenceSection);
+            } else {
+                doc.DrawText(420, 0, 23, "SEKSYEN KESALAHAN");
+                doc.DrawText(680, 0, 23, ": " + info.ResultCode);
+            }
 
             doc.DrawText(0, 30, 23, "TARIKH");
             doc.DrawText(230, 0, 23, ": " + CacheManager.GetDateString(info.OffenceDateTime));

@@ -587,7 +587,6 @@ public class RingkasanFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int id) {
                     CacheManager.IsNewNotice = true;
                     System.gc();
-//                    ClearFileData();
                     Intent i = new Intent(getActivity(), NoticeIssuanceActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     getActivity().startActivity(i);
@@ -599,7 +598,8 @@ public class RingkasanFragment extends Fragment {
         {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int id) {
+                public void onClick(DialogInterface dialog, int
+                        id) {
                     AlertMessage(getActivity(), "CETAK", "Cetak Salinan Kedua?", 2);
                 }
             });
@@ -915,20 +915,6 @@ public class RingkasanFragment extends Fragment {
         }
 
         return true;
-    }
-
-    private void ClearFileData() {
-        try {
-            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "CustomImageDir");
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            for (File file : dir.listFiles()) {
-                file.delete();
-            }
-        } catch (Exception ex) {
-
-        }
     }
 
     private void MovePictures()

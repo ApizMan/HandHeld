@@ -142,7 +142,7 @@ public class HistoryActivity extends AppCompatActivity {
 				try {
 					PrinterUtils.OpenConnection();
 					if(PrinterUtils.Connection.isConnected()) {
-						doc = PrinterUtils.CreateNotice(selected);
+						doc = PrinterUtils.CreateNotice(info);
 						PrinterUtils.Print(doc);
 					} else {
 						CustomAlertDialog.Show(this, "ERROR", "FAILED TO CONNECT", 3);
