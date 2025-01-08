@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -202,6 +203,7 @@ public class MaklumatFragment extends Fragment {
                     retry = 0;
                     (getView().findViewById(R.id.tvTrafikMessage)).setVisibility(View.GONE);
                     CheckVehicleNo(etVehicleNo.getText().toString(), CacheManager.SummonIssuanceInfo);
+                    CacheManager.SummonIssuanceInfo.OffenceDateTime = new Date();
 
                     mProgressDialog = new ProgressDialog(v.getContext(), R.style.AppTheme_Dialog);
                     mProgressDialog.setIndeterminate(true);

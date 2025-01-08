@@ -373,8 +373,6 @@ public class RingkasanFragment extends Fragment {
         btnCetak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CacheManager.SummonIssuanceInfo.OffenceDateTime = new Date();
-
                 if(SettingsHelper.MACAddress.isEmpty()) {
                     Toast.makeText(getActivity(), "Sila Masukkan MAC Address Printer", Toast.LENGTH_LONG).show();
                     Intent i = new Intent(getActivity(), StatusActivity.class);
