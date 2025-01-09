@@ -424,11 +424,15 @@ public class RingkasanFragment extends Fragment {
         String url = CacheManager.qrPegeypay;
 
         Map<String, Object> params = new HashMap<>();
-        params.put("order_output", "online");
+        params.put("order_output", "onlinemx");
         params.put("order_no", CacheManager.SummonIssuanceInfo.NoticeSerialNo);
         params.put("override_existing_unprocessed_order_no", "Yes");
         params.put("order_amount", String.format("%.2f", CacheManager.SummonIssuanceInfo.CompoundAmount1));
         params.put("qr_validity", 43200);
+        params.put("step2_amount_validity", String.format("%.2f", CacheManager.SummonIssuanceInfo.CompoundAmount2) + ",99999");
+        if (CacheManager.SummonIssuanceInfo.CompoundAmount3 != 0) {
+            params.put("step3_amount_validity", String.format("%.2f", CacheManager.SummonIssuanceInfo.CompoundAmount3) + ",99999");
+        }
         params.put("store_id", "Kompund");
         params.put("terminal_id", "Phone");
         params.put("shift_id", "SHIFT 1");
