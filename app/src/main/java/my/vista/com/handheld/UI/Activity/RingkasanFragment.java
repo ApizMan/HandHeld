@@ -660,6 +660,15 @@ public class RingkasanFragment extends Fragment {
                 return false;
             }
         }
+
+        if (CacheManager.SummonIssuanceInfo.OffenceDateTime == null)
+        {
+            if (CacheManager.isKompaunAm) {
+                CustomAlertDialog.Show(getActivity(), "TARIKH & WAKTU", "Sila Tekan Button Semak.", 3);
+                return false;
+            }
+        }
+
         if (CacheManager.SummonIssuanceInfo.NamaSyarikat.length() == 0)
         {
             if (!CacheManager.isKompaunAm) {

@@ -1,6 +1,7 @@
 package my.vista.com.handheld.Data;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -1146,9 +1147,11 @@ public class DbLocal
 			DbUtils obj = new DbUtils(context);
 			obj.Open();
 
-			String datetime = CacheManager.GetStandardDateString(CacheManager.addHour(new Date(), -12));
+			// Get the start and end of the day
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
 
-			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME1 IS NOT NULL AND IMAGE_NAME1 <> '' AND OFFENCE_DATE >= '" + datetime + "'";
+			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME1 IS NOT NULL AND IMAGE_NAME1 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
 			Cursor cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1159,7 +1162,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME2 IS NOT NULL AND IMAGE_NAME2 <> '' AND OFFENCE_DATE >= '" + datetime + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME2 IS NOT NULL AND IMAGE_NAME2 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1170,7 +1173,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME3 IS NOT NULL AND IMAGE_NAME3 <> '' AND OFFENCE_DATE >= '" + datetime + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME3 IS NOT NULL AND IMAGE_NAME3 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1181,7 +1184,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME4 IS NOT NULL AND IMAGE_NAME4 <> '' AND OFFENCE_DATE >= '" + datetime + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME4 IS NOT NULL AND IMAGE_NAME4 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1192,7 +1195,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME5 IS NOT NULL AND IMAGE_NAME5 <> '' AND OFFENCE_DATE >= '" + datetime + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME5 IS NOT NULL AND IMAGE_NAME5 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1287,17 +1290,20 @@ public class DbLocal
 		return list;
 	}
 
-	public static int GetNumberOfSummonsIssued(Context context)
-	{
+	public static int GetNumberOfSummonsIssued(Context context) {
 		int bResult = 0;
 
 		try {
 			DbUtils obj = new DbUtils(context);
 			obj.Open();
 
-			String datetime = CacheManager.GetStandardDateString(CacheManager.addHour(new Date(), -12));
+			// Get the start and end of the day
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
 
-			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE OFFENCE_DATE >= '" + datetime + "'";
+			// Update the SQL command to filter by today's range
+			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE OFFENCE_DATE >= '"
+					+ startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
 			Cursor cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1308,12 +1314,29 @@ public class DbLocal
 				cur.close();
 			}
 			obj.Close();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			Log.e("Error", e.getMessage());
 		}
 
 		return bResult;
 	}
+
+	private static Date getStartOfDay() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		return calendar.getTime();
+	}
+
+	private static Date getEndOfDay() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		return calendar.getTime();
+	}
+
 
 	public static ArrayList<SummonIssuanceInfo> GetSummonsHistory(Context context)
 	{
@@ -1322,9 +1345,11 @@ public class DbLocal
 		obj.Open();
 		Cursor cur = null;
 
-		String datetime = CacheManager.GetStandardDateString(CacheManager.addHour(new Date(), -12));
+		// Get the start and end of the day
+		String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
+		String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
 
-		String sqlCommand = "SELECT * FROM OFFENCE_NOTICE_MAINTENANCE WHERE OFFENCE_DATE >= '" + datetime + "'";
+		String sqlCommand = "SELECT * FROM OFFENCE_NOTICE_MAINTENANCE WHERE OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
 		cur = obj.Query(sqlCommand, null);
 		if( (cur != null) && cur.moveToFirst() )
@@ -1375,9 +1400,11 @@ public class DbLocal
             DbUtils obj = new DbUtils(context);
             obj.Open();
 
-            String datetime = CacheManager.GetStandardDateString(CacheManager.addHour(new Date(), -12));
+			// Get the start and end of the day
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
 
-            String sqlCommand = "SELECT COUNT(1) AS TOTAL_TRANSACTIONS FROM TRANSACTION_HISTORY WHERE UPDATED_DATE >= '" + datetime + "'";
+            String sqlCommand = "SELECT COUNT(1) AS TOTAL_TRANSACTIONS FROM TRANSACTION_HISTORY WHERE UPDATED_DATE >= '" +  startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
 
             Cursor cur = obj.Query(sqlCommand, null);
             if ((cur != null) && cur.moveToFirst()) {
@@ -1405,9 +1432,11 @@ public class DbLocal
 			DbUtils obj = new DbUtils(context);
 			obj.Open();
 
-			String datetime = CacheManager.GetStandardDateString(CacheManager.addHour(new Date(), -12));
+			// Get the start and end of the day
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
 
-			String sqlCommand = "SELECT SUM(COMPOUND_AMOUNT) AS TOTAL_COMPOUND, SUM(CLAMPING_AMOUNT) AS TOTAL_CLAMPING FROM TRANSACTION_HISTORY WHERE UPDATED_DATE >= '" + datetime + "'";
+			String sqlCommand = "SELECT SUM(COMPOUND_AMOUNT) AS TOTAL_COMPOUND, SUM(CLAMPING_AMOUNT) AS TOTAL_CLAMPING FROM TRANSACTION_HISTORY WHERE UPDATED_DATE >= '" + startOfDay + "' AND OFFENCE_DATE <= '" + endOfDay + "'";
 
 			Cursor cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
