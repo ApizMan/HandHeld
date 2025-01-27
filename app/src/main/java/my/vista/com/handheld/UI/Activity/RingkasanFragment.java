@@ -435,7 +435,7 @@ public class RingkasanFragment extends Fragment {
         }
         params.put("store_id", "Kompund");
         params.put("terminal_id", "Phone");
-        params.put("shift_id", "SHIFT 1");
+        params.put("shift_id", "PBT Kuantan");
         params.put("language", "en_us");
 
         TrustAllCertificates.trustAllHosts();

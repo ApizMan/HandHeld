@@ -24,6 +24,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.widget.Toast;
 
@@ -50,6 +51,8 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 	public static String officerUnit = "";
 	public static String officerSaksi = "";
 	public static String finalImage = "";
+
+	public static String setDate = "";
 	public  static  boolean hasGambarSelepas = false;
 	public static  String image5path = "";
 	public static int publicRequestCode = 0;
@@ -252,6 +255,18 @@ public static String ServerURL = "http://myenforce.citycarpark.my/HandheldApi_MB
 	private static void loadImage5() {
 		SharedPreferences sharedPreferences = mContext.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
 		finalImage = sharedPreferences.getString("finalImage", null);
+	}
+
+	public static void setLastProcessedDate(String date) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("lastProcessedDate", date);
+		editor.apply();
+	}
+
+	public static String getLastProcessedDate() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+		return prefs.getString("lastProcessedDate", null);
 	}
 
 	public static void kompaunAmIsTrue(boolean kompaunAm) {

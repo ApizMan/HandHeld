@@ -1,7 +1,9 @@
 package my.vista.com.handheld.UI.Activity;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.Manifest;
@@ -522,7 +524,12 @@ public class LoginActivity extends Activity {
 		if(ProcessLogin())
 		{
 			CacheManager.IsClearData = true;
-//			ClearFileData();
+
+			// Check the current date condition
+			if (!isTodayAlreadyProcessed()) {
+				ClearFileData();
+			}
+
 			CacheManager.SummonIssuanceInfo = new SummonIssuanceInfo();
 			CacheManager.UserId = txtUserName.getText().toString();
 			CacheManager.saveOfficerId(CacheManager.UserId); // Save to persistent storage
@@ -535,6 +542,21 @@ public class LoginActivity extends Activity {
 
 		if (mProgressDialog != null)
 			mProgressDialog.dismiss();
+	}
+
+	// Helper method to check the current date
+	private boolean isTodayAlreadyProcessed() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Define date format
+		String currentDate = dateFormat.format(new Date()); // Get current date
+		String lastProcessedDate = CacheManager.getLastProcessedDate(); // Retrieve the last processed date from storage
+
+		// If lastProcessedDate is null or doesn't match today, update it and return false
+		if (lastProcessedDate == null || !lastProcessedDate.equals(currentDate)) {
+			CacheManager.setLastProcessedDate(currentDate); // Save today's date to storage
+			return false; // Not processed today
+		}
+
+		return true; // Already processed today
 	}
 	
 	private boolean ProcessLogin()

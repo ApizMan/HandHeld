@@ -1148,10 +1148,10 @@ public class DbLocal
 			obj.Open();
 
 			// Get the start and end of the day
-			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
-			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay()).substring(0, 8); // Extract "yyyyMMdd"
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay()).substring(0, 8); // Extract "yyyyMMdd"
 
-			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME1 IS NOT NULL AND IMAGE_NAME1 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME1 IS NOT NULL AND IMAGE_NAME1 <> '' AND SUBSTR(OFFENCE_DATE, 1, 8) >= '" + startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 			Cursor cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1162,7 +1162,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME2 IS NOT NULL AND IMAGE_NAME2 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME2 IS NOT NULL AND IMAGE_NAME2 <> '' AND SUBSTR(OFFENCE_DATE, 1, 8) >= '" + startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1173,7 +1173,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME3 IS NOT NULL AND IMAGE_NAME3 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME3 IS NOT NULL AND IMAGE_NAME3 <> '' AND SUBSTR(OFFENCE_DATE, 1, 8) >= '" + startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1184,7 +1184,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME4 IS NOT NULL AND IMAGE_NAME4 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME4 IS NOT NULL AND IMAGE_NAME4 <> '' AND SUBSTR(OFFENCE_DATE, 1, 8) >= '" + startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1195,7 +1195,7 @@ public class DbLocal
 				cur.close();
 			}
 
-			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME5 IS NOT NULL AND IMAGE_NAME5 <> '' AND OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+			sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE IMAGE_NAME5 IS NOT NULL AND IMAGE_NAME5 <> '' AND SUBSTR(OFFENCE_DATE, 1, 8) >= '" + startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 			cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1298,12 +1298,12 @@ public class DbLocal
 			obj.Open();
 
 			// Get the start and end of the day
-			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
-			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay()).substring(0, 8); // Extract "yyyyMMdd"
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay()).substring(0, 8); // Extract "yyyyMMdd"
 
 			// Update the SQL command to filter by today's range
-			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE OFFENCE_DATE >= '"
-					+ startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+			String sqlCommand = "SELECT COUNT(1) AS TOTAL_NOTICES FROM OFFENCE_NOTICE_MAINTENANCE WHERE SUBSTR(OFFENCE_DATE, 1, 8) >= '"
+					+ startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 			Cursor cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
@@ -1346,10 +1346,13 @@ public class DbLocal
 		Cursor cur = null;
 
 		// Get the start and end of the day
-		String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
-		String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
+		String startOfDay = CacheManager.GetStandardDateString(getStartOfDay()).substring(0, 8); // Extract "yyyyMMdd"
+		String endOfDay = CacheManager.GetStandardDateString(getEndOfDay()).substring(0, 8); // Extract "yyyyMMdd"
 
-		String sqlCommand = "SELECT * FROM OFFENCE_NOTICE_MAINTENANCE WHERE OFFENCE_DATE >= '" + startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+		// Query modified to use only the date part of OFFENCE_DATE
+		String sqlCommand = "SELECT * FROM OFFENCE_NOTICE_MAINTENANCE " +
+				"WHERE SUBSTR(OFFENCE_DATE, 1, 8) >= '" + startOfDay + "' " +
+				"AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 		cur = obj.Query(sqlCommand, null);
 		if( (cur != null) && cur.moveToFirst() )
@@ -1401,10 +1404,10 @@ public class DbLocal
             obj.Open();
 
 			// Get the start and end of the day
-			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
-			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay()).substring(0, 8); // Extract "yyyyMMdd"
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay()).substring(0, 8); // Extract "yyyyMMdd"
 
-            String sqlCommand = "SELECT COUNT(1) AS TOTAL_TRANSACTIONS FROM TRANSACTION_HISTORY WHERE UPDATED_DATE >= '" +  startOfDay + "' OR OFFENCE_DATE <= '" + endOfDay + "'";
+            String sqlCommand = "SELECT COUNT(1) AS TOTAL_TRANSACTIONS FROM TRANSACTION_HISTORY WHERE SUBSTR(UPDATED_DATE, 1, 8) >= '" +  startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
             Cursor cur = obj.Query(sqlCommand, null);
             if ((cur != null) && cur.moveToFirst()) {
@@ -1433,10 +1436,10 @@ public class DbLocal
 			obj.Open();
 
 			// Get the start and end of the day
-			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay());
-			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay());
+			String startOfDay = CacheManager.GetStandardDateString(getStartOfDay()).substring(0, 8); // Extract "yyyyMMdd"
+			String endOfDay = CacheManager.GetStandardDateString(getEndOfDay()).substring(0, 8); // Extract "yyyyMMdd"
 
-			String sqlCommand = "SELECT SUM(COMPOUND_AMOUNT) AS TOTAL_COMPOUND, SUM(CLAMPING_AMOUNT) AS TOTAL_CLAMPING FROM TRANSACTION_HISTORY WHERE UPDATED_DATE >= '" + startOfDay + "' AND OFFENCE_DATE <= '" + endOfDay + "'";
+			String sqlCommand = "SELECT SUM(COMPOUND_AMOUNT) AS TOTAL_COMPOUND, SUM(CLAMPING_AMOUNT) AS TOTAL_CLAMPING FROM TRANSACTION_HISTORY WHERE SUBSTR(UPDATED_DATE, 1, 8) >= '" + startOfDay + "' AND SUBSTR(OFFENCE_DATE, 1, 8) <= '" + endOfDay + "'";
 
 			Cursor cur = obj.Query(sqlCommand, null);
 			if ((cur != null) && cur.moveToFirst()) {
