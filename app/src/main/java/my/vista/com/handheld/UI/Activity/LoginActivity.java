@@ -23,6 +23,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
@@ -165,52 +166,62 @@ public class LoginActivity extends Activity {
 
 	int REQUEST_PERMISSION = 1;
 	private boolean checkPermissions() {
-		if (hasPermissionsGranted()) {
-			return true;
-		} else {
-			requestPermissions();
-		}
-		return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (hasPermissionsGranted()) {
+                return true;
+            } else {
+                requestPermissions();
+            }
+        }
+        return false;
 	}
 
-	public boolean hasPermissionsGranted(){
+	@RequiresApi(api = Build.VERSION_CODES.S)
+    public boolean hasPermissionsGranted(){
 		return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 				&& ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 				&& ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 				&& ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
 				&& ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-				&& ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED;
+				&& ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED
+				&& ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
+				&& ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
 	}
 
-	public void requestPermissions() {
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-			ActivityCompat.requestPermissions(this, new String[] {
-					Manifest.permission.WRITE_EXTERNAL_STORAGE,
-					Manifest.permission.ACCESS_FINE_LOCATION,
-					Manifest.permission.ACCESS_COARSE_LOCATION,
-					Manifest.permission.READ_PHONE_STATE,
-					Manifest.permission.BLUETOOTH,
-					Manifest.permission.BLUETOOTH_ADMIN
-			}, REQUEST_PERMISSION);
-		}
-	}
+	@RequiresApi(api = Build.VERSION_CODES.S)
+    public void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT
+        }, REQUEST_PERMISSION);
+    }
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
 										   @NonNull int[] grantResults) {
 		if (requestCode == REQUEST_PERMISSION) {
 			if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-				if(!hasPermissionsGranted())
-					Toast.makeText(this, "Please grant all permissions needed for this app", Toast.LENGTH_SHORT).show();
-				else
-					doPreStage();
-			}
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if(!hasPermissionsGranted())
+                        Toast.makeText(this, "Please grant all permissions needed for this app", Toast.LENGTH_SHORT).show();
+                    else
+                        doPreStage();
+                }
+            }
 			else {
-				if(!hasPermissionsGranted())
-					Toast.makeText(this, "Please grant all permissions needed for this app", Toast.LENGTH_SHORT).show();
-				else
-					doPreStage();
-			}
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if(!hasPermissionsGranted())
+                        Toast.makeText(this, "Please grant all permissions needed for this app", Toast.LENGTH_SHORT).show();
+                    else
+                        doPreStage();
+                }
+            }
 		}
 	}
 
@@ -275,7 +286,7 @@ public class LoginActivity extends Activity {
 				String url = CacheManager.ServerURL + "RegisterDevice/" + CacheManager.deviceId;
 				// Trust all certificates (use with caution)
 				TrustAllCertificates.trustAllHosts();
-				JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
+				JsonObjectRequest postRequest = new JsonObjectRequest(url,
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
@@ -346,7 +357,7 @@ public class LoginActivity extends Activity {
 	private void DownloadLookupTables() {
 		String url = CacheManager.ServerURL + "DownloadLookupTable/" + SettingsHelper.HandheldCode;
 		TrustAllCertificates.trustAllHosts();
-		JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
+		JsonObjectRequest postRequest = new JsonObjectRequest(url,
 				new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
